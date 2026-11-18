@@ -1,0 +1,11 @@
+{
+  "name": "topic-03-http-lifecycle-lab",
+  "version": "1.0.0",
+  "description": "Native HTTP Server & Request/Response Life Cycle",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "applied": "node applied.js",
+    "test": "node --test test.js"
+  }
+}

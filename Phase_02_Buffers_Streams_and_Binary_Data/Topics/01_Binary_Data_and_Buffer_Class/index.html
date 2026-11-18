@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০১: ওয়েব ব্যাকএন্ডে বাইনারি ডাটা ও Node.js Buffer ক্লাস</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --accent-border: #bfdbfe;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dbeafe;
+            --tag-text: #1d4ed8;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --info-bg: #f0fdf4;
+            --info-border: #bbf7d0;
+            --info-text: #15803d;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+            --danger-bg: #fef2f2;
+            --danger-border: #fecaca;
+            --danger-text: #b91c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-phase {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.02rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            border: 1px solid #1e293b;
+        }
+
+        pre code {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            padding: 1.1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.98rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .alert-info {
+            background-color: var(--info-bg);
+            border-left: 4px solid var(--info-border);
+            color: var(--info-text);
+        }
+
+        .alert-warning {
+            background-color: var(--warning-bg);
+            border-left: 4px solid var(--warning-border);
+            color: var(--warning-text);
+        }
+
+        .alert-danger {
+            background-color: var(--danger-bg);
+            border-left: 4px solid var(--danger-border);
+            color: var(--danger-text);
+        }
+
+        .alert strong {
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--surface-subtle);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        .memory-diagram {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .memory-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-subtle);
+        }
+
+        .memory-box h4 {
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .cta-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--accent-light);
+            border: 1px solid var(--accent-border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-action:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="nav-back">← মাস্টার ট্র্যাকারে ফিরে যান</a>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">Phase 02: Buffers, Streams & Binary Data</span>
+                <span class="badge badge-topic">Topic 01</span>
+                <span class="badge" style="background: #e0f2fe; color: #0369a1;">পাঠের সময়: ১৫ মিনিট</span>
+            </div>
+            <h1>ওয়েব ব্যাকএন্ডে বাইনারি ডাটা ও Node.js Buffer ক্লাস</h1>
+            <p class="subtitle">সার্ভার আর্কিটেকচারে র মেমোরি, বাইট সিকোয়েন্স, এনকোডিং ও পারফরম্যান্স-ক্রিটিক্যাল বাইনারি ডাটা ম্যানেজমেন্টের সম্পূর্ণ গাইড।</p>
+        </header>
+
+        <!-- সেকশন ১ -->
+        <section class="card">
+            <h2>১. ওয়েব ব্যাকএন্ডে বাইনারি ডাটার প্রয়োজনীয়তা</h2>
+            <p>ওয়েব ডেভেলপমেন্টের প্রাথমিক ধাপে আমরা প্রায়শই স্ট্রিং ও JSON অবজেক্ট নিয়ে কাজ করি। কিন্তু বাস্তবসম্মত প্রোডাকশন ওয়েব সার্ভারে বিপুল পরিমাণ ডাটা টেক্সট নয়, বরং <strong>বাইনারি ডাটা (Raw Octets / Bytes)</strong> হিসেবে আদান-প্রদান হয়।</p>
+            
+            <h3>ওয়েব ব্যাকএন্ডে বাইনারি ডাটা কোথায় ব্যবহৃত হয়?</h3>
+            <ul>
+                <li><strong>মাল্টিমিডিয়া ফাইল ট্র্যাফিক:</strong> ইউজার যখন ইমেজ (PNG, JPG, WebP), PDF চালান বা ভিডিও আপলোড/ডাউনলোড করে।</li>
+                <li><strong>নেটওয়ার্ক প্রোটোকল প্যাকেট:</strong> TCP সকেট ও TLS/SSL এনক্রিপশন লেয়ারের প্রতিটি প্যাকেট খাঁটি বাইনারি বাইট হিসেবে পরিবাহিত হয়।</li>
+                <li><strong>HTTP হেডার ডিকোডিং:</strong> HTTP Basic Authentication হেডার (<code>Authorization: Basic dXNlcjpwYXNz</code>) Base64 এনকোডেড বাইনারি বাইটের সমন্বয়ে গঠিত।</li>
+                <li><strong>ক্রিপ্টোগ্রাফি ও হ্যাশিং:</strong> পাসওয়ার্ড হ্যাশিং (bcrypt, Argon2), HMAC স্বাক্ষর এবং JWT টোকেনের গোপনীয় অংশ বাইনারি মেমোরিতে প্রসেস হয়।</li>
+            </ul>
+
+            <div class="alert alert-info">
+                <strong>💡 জেনে রাখা ভালো:</strong> আদি জাভাস্ক্রিপ্ট ব্রাউজারে স্ট্রিং ও DOM হ্যান্ডলিংয়ের জন্য ডিজাইন করা হয়েছিল, যেখানে র বাইনারি মেমোরি অ্যাক্সেসের সুযোগ ছিল না। Node.js সার্ভার-সাইড ব্যাকএন্ড হিসেবে প্রথম থেকেই উচ্চক্ষমতাসম্পন্ন <code>Buffer</code> ক্লাস প্রবর্তন করে।
+            </div>
+        </section>
+
+        <!-- সেকশন ২ -->
+        <section class="card">
+            <h2>২. Node.js `Buffer` ক্লাস কী এবং কীভাবে কাজ করে?</h2>
+            <p>Node.js-এ <code>Buffer</code> হলো একটি গ্লোবাল ক্লাস যা অপরিবর্তনীয় নির্দিষ্ট আকারের (fixed-size) র মেমোরি চাঙ্ক নির্দেশ করে। প্রতিটি বাফারের উপাদান হলো একটি <strong>৮-বিট আনসাইন্ড ইন্টিজার (Unsigned 8-bit Integer)</strong>, যার মান <code>0</code> থেকে <code>255</code> (হেক্সাডেসিমেলে <code>0x00</code> থেকে <code>0xFF</code>)।</p>
+
+            <div class="memory-diagram">
+                <div class="memory-box">
+                    <h4>V8 JavaScript Heap মেমোরি</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">সাধারণ জাভাস্ক্রিপ্ট অবজেক্ট, স্ট্রিং ও ভ্যারিয়েবল এখানে থাকে। V8 Garbage Collector নিয়মিত মেমোরি ক্লিন ও মুভ করে। বড় ডাটার ক্ষেত্রে মেমোরি ওভারহেড তৈরি হয়।</p>
+                </div>
+                <div class="memory-box" style="border-color: var(--accent-border); background: var(--accent-light);">
+                    <h4>Node.js Buffer মেমোরি (C++ Layer)</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-body); margin: 0;">বাফারের মেমোরি বরাদ্দ হয় <strong>V8 Heap এর সম্পূর্ণ বাইরে</strong>, র C++ কার্নেল মেমোরিতে (Raw Heap-less Memory)। এটি শূন্য মেমোরি কপি এবং উচ্চগতির নেটওয়ার্ক I/O নিশ্চিত করে।</p>
+                </div>
+            </div>
+
+            <h3>Buffer ক্লাসের মূল বৈশিষ্ট্যসমূহ:</h3>
+            <ol>
+                <li><strong>ফিক্সড সাইজ (Fixed Length):</strong> বাফার তৈরি করার পর তার সাইজ সাধারণ অ্যারের মতো বাড়ানো বা কমানো যায় না।</li>
+                <li><strong>অকট্রেট অ্যারে (Uint8Array):</strong> বাফার আসলে জাভাস্ক্রিপ্ট <code>Uint8Array</code> কে ইনহেরিট করে, যার ফলে এতে অ্যারের মতো ইনডেক্সিং (<code>buf[0]</code>) করা যায়।</li>
+                <li><strong>গ্লোবাল মডিউল:</strong> কোনো ইমপোর্ট ছাড়াই গ্লোবালি অ্যাক্সেসযোগ্য, তবে আধুনিক ESM কোডে <code>import { Buffer } from 'node:buffer';</code> ব্যবহার সর্বোত্তম চর্চা।</li>
+            </ol>
+        </section>
+
+        <!-- সেকশন ৩ -->
+        <section class="card">
+            <h2>৩. বাফার তৈরি ও অ্যালটেশনের নিরাপদ পদ্ধতি</h2>
+            <p>Node.js অতীতে <code>new Buffer()</code> কনস্ট্রাক্টর সমর্থন করত, যা অনিরাপদ হওয়ার কারণে বর্তমানে সম্পূর্ণ <strong>Deprecated</strong>। আধুনিক Node.js-এ বাফার তৈরির তিনটি প্রধান স্ট্যাটিক মেথড রয়েছে:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>মেথড</th>
+                        <th>উদ্দেশ্য</th>
+                        <th>নিরাপত্তা স্তর</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Buffer.alloc(size)</code></td>
+                        <td>নির্দিষ্ট সাইজের বাফার তৈরি করে এবং মেমোরির প্রতিটি বাইটে শূন্য (0) দিয়ে পূর্ণ করে।</td>
+                        <td><strong style="color: #15803d;">১০০% নিরাপদ (Safe)</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>Buffer.allocUnsafe(size)</code></td>
+                        <td>নির্দিষ্ট সাইজের বাফার দ্রুত বরাদ্দ করে, কিন্তু মেমোরি শূন্য করে না (পুরোনো ডেটা থেকে যায়)।</td>
+                        <td><strong style="color: #b91c1c;">ঝুঁকিপূর্ণ (Potential Security Leak)</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>Buffer.from(data, encoding)</code></td>
+                        <td>বিদ্যমান স্ট্রিং, অ্যারে বা অন্য বাফার থেকে নতুন বাফার মেমোরি তৈরি করে।</td>
+                        <td><strong style="color: #15803d;">নিরাপদ ও বহুল ব্যবহৃত</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>কোড উদাহরণ: মেথডসমূহের ব্যবহার</h3>
+            <pre><code>import { Buffer } from 'node:buffer';
+
+// ১. নিরাপদ এলোকেশন (১০ বাইট শূন্য দিয়ে পূরণ করা হবে)
+const safeBuf = Buffer.alloc(10);
+console.log(safeBuf); // &lt;Buffer 00 00 00 00 00 00 00 00 00 00&gt;
+
+// ২. স্ট্রিং থেকে বাফার তৈরি
+const strBuf = Buffer.from('Hello Web', 'utf-8');
+console.log(strBuf); // &lt;Buffer 48 65 6c 6c 6f 20 57 65 62&gt;
+
+// ৩. অ্যারে অফ বাইটস থেকে বাফার
+const numBuf = Buffer.from([65, 66, 67]); // ASCII A, B, C
+console.log(numBuf.toString()); // "ABC"</code></pre>
+
+            <div class="alert alert-danger">
+                <strong>⚠️ সতর্কতা: কেন `Buffer.allocUnsafe()` ব্যবহারে সাবধান হবেন?</strong>
+                <code>allocUnsafe()</code> সি-লেভেলে মেমোরি ক্লিন না করে বরাদ্দ দেয়। এতে আপনার অপারেটিং সিস্টেমের অন্যান্য প্রসেসের সংবেদনশীল ডেটা (যেমন পাসওয়ার্ড, ডাটাবেস কি, প্রাইভেট টোকেন) মেমোরি ফ্র্যাগমেন্ট হিসেবে থাকতে পারে। যদি আপনি এই বাফার পূরণ না করেই কোনো ক্লায়েন্টের কাছে রেসপন্স হিসেবে পাঠিয়ে দেন, তাহলে চরম সিকিউরিটি ডাটা লিক (Data Leak) ঘটতে পারে!
+            </div>
+        </section>
+
+        <!-- সেকশন ৪ -->
+        <section class="card">
+            <h2>৪. Character Length বনাম Byte Length: ওয়েব ব্যাকএন্ডের চরম বাগ!</h2>
+            <p>ওয়েব ব্যাকএন্ড ডেভেলপমেন্টে সবচেয়ে প্রচলিত কিন্তু মারাত্মক একটি বাগ হলো HTTP রেসপন্সে <code>Content-Length</code> নির্ধারণে স্ট্রিংয়ের <code>.length</code> প্রোপার্টি ব্যবহার করা।</p>
+
+            <h3>জাভাস্ক্রিপ্ট স্ট্রিং বনাম UTF-8 মেমোরি</h3>
+            <p>জাভাস্ক্রিপ্ট স্ট্রিং UTF-16 কোড ইউনিট গণনা করে। ইংরেজি অক্ষরের (ASCII) ক্ষেত্রে ১ ক্যারেক্টার = ১ বাইট। কিন্তু বাংলা, আরবি, চাইনিজ বা ইমোজির ক্ষেত্রে ১টি ক্যারেক্টার এনকোড হতে <strong>২ থেকে ৪ বাইট</strong> পর্যন্ত জায়গা নেয়!</p>
+
+            <pre><code>const english = "Hello";
+console.log(english.length);                     // 5
+console.log(Buffer.byteLength(english, 'utf-8')); // 5 (সমান)
+
+const bangla = "বাংলা";
+console.log(bangla.length);                      // 5
+console.log(Buffer.byteLength(bangla, 'utf-8'));  // 15! (প্রতিটি বাংলা বর্ণ ৩ বাইট)
+
+const emoji = "🚀";
+console.log(emoji.length);                       // 2 (UTF-16 surrogate pair)
+console.log(Buffer.byteLength(emoji, 'utf-8'));   // 4 বাইট!</code></pre>
+
+            <div class="alert alert-warning">
+                <strong>🚨 HTTP তে কী সমস্যা হয়?</strong>
+                যদি আপনি <code>res.setHeader('Content-Length', bangla.length)</code> দেন, তাহলে আপনি ক্লায়েন্টকে বলছেন ডাটার সাইজ ৫ বাইট। ক্লায়েন্ট (ব্রাউজার বা মোবাইল অ্যাপ) প্রথম ৫ বাইট গ্রহণ করেই কানেকশন ক্লোজ করে দেবে, যার ফলে বাংলা টেক্সট বা ইমোজি কেটে যাবে এবং ডেটা করাপ্ট হবে! সবসময় <code>Buffer.byteLength()</code> অথবা <code>buffer.length</code> ব্যবহার করতে হবে।
+            </div>
+        </section>
+
+        <!-- সেকশন ৫ -->
+        <section class="card">
+            <h2>৫. বাফার এনকোডিং ও রিয়েল-ওয়ার্ল্ড ওয়েব কেস</h2>
+            <p>বাফার থেকে ডেটা বিভিন্ন টেক্সট ফরম্যাটে রূপান্তর এবং উল্টো রূপান্তর করার জন্য Node.js বেশ কয়েকটি এনকোডিং সমর্থন করে:</p>
+
+            <ul>
+                <li><code>'utf-8'</code>: ওয়েবের ডিফল্ট টেক্সট এনকোডিং।</li>
+                <li><code>'base64'</code>: ৮-বিট বাইনারি ডেটাকে ৬৪টি নিরাপদ ASCII ক্যারেক্টারে রূপান্তর করে।</li>
+                <li><code>'hex'</code>: প্রতিটি বাইটকে দুটি হেক্সাডেসিমেল ক্যারেক্টারে (0-9, a-f) রিপ্রেজেন্ট করে।</li>
+            </ul>
+
+            <h3>রিয়েল-ওয়ার্ল্ড কেস: HTTP Basic Authentication ডিকোডিং</h3>
+            <p>ব্রাউজার যখন <code>Authorization: Basic YWRtaW46c2VjcmV0MTIz</code> হেডার পাঠায়, সার্ভারে বাফার দিয়ে এটি সহজেই ডিকোড করা যায়:</p>
+
+            <pre><code>// ইনকামিং হেডার: "Basic YWRtaW46c2VjcmV0MTIz"
+const base64Str = "YWRtaW46c2VjcmV0MTIz";
+
+// Base64 বাফার তৈরি করে UTF-8 এ রূপান্তর
+const credentials = Buffer.from(base64Str, 'base64').toString('utf-8');
+console.log(credentials); // "admin:secret123"
+
+const [username, password] = credentials.split(':');
+console.log(`User: ${username}, Pass: ${password}`);</code></pre>
+        </section>
+
+        <!-- সেকশন ৬ -->
+        <section class="card">
+            <h2>৬. সরাসরি HTTP দিয়ে বাইনারি ফাইল বা ইমেজ সার্ভ করা</h2>
+            <p>Node.js নেটিভ সার্ভারে <code>res.end()</code> শুধুমাত্র স্ট্রিং নয়, সরাসরি একটি <code>Buffer</code> গ্রহণ করতে পারে। এটি উচ্চগতির ফাইল সার্ভিং ও ইন-মেমোরি ইমেজ প্রসেসিংয়ের ভিত্তি।</p>
+
+            <pre><code>import http from 'node:http';
+import { Buffer } from 'node:buffer';
+
+// ১x১ ট্রান্সপারেন্ট PNG এর Base64 বাইনারি ডেটা
+const pixelBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+const pixelBuffer = Buffer.from(pixelBase64, 'base64');
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/pixel.png') {
+    res.writeHead(200, {
+      'Content-Type': 'image/png',
+      'Content-Length': pixelBuffer.length // খাঁটি বাইট সাইজ (৬৮ বাইট)
+    });
+    return res.end(pixelBuffer); // সরাসরি বাইনারি বাফার পাঠানো
+  }
+});
+
+server.listen(3000);</code></pre>
+        </section>
+
+        <!-- সেকশন ৭ -->
+        <section class="card">
+            <h2>৭. গুরুত্বপূর্ণ টেকওয়ে ও বেস্ট প্র্যাকটিস</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>নিয়ম</th>
+                        <th>কেন গুরুত্বপূর্ণ?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>কখনই <code>new Buffer()</code> ব্যবহার করবেন না</td>
+                        <td>এটি সিকিউরিটি ভলনারেবিলিটির কারণে ডিপ্রিকেটেড; সর্বদা <code>Buffer.from()</code> বা <code>Buffer.alloc()</code> ব্যবহার করুন।</td>
+                    </tr>
+                    <tr>
+                        <td>HTTP <code>Content-Length</code> এ বাইট সাইজ দিন</td>
+                        <td>স্ট্রিংয়ের <code>.length</code> ক্যারেক্টার গোনে, বাইট নয়। মাল্টিবাইট ক্যারেক্টারের ক্ষেত্রে ডেটা ট্রাঙ্কেট হওয়া প্রতিরোধ করতে <code>Buffer.byteLength()</code> ব্যবহার করুন।</td>
+                    </tr>
+                    <tr>
+                        <td>প্রয়োজনে <code>Buffer.concat()</code> দিয়ে একাধিক চাঙ্ক একত্র করুন</td>
+                        <td>ইনকামিং নেটওয়ার্ক স্ট্রিমের বাফার চাঙ্কগুলো একটিমাত্র বাফারে পরিণত করতে <code>Buffer.concat([chunk1, chunk2])</code> ব্যবহার করা স্ট্যান্ডার্ড।</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="cta-container">
+                <div>
+                    <h3 style="margin: 0; color: var(--accent);">হাতে-কলমে কোড শিখতে প্রস্তুত?</h3>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-body);">টপিক ০১ এর ল্যাব ফাইলে চলুন এবং সরাসরি ইন্টারেক্টিভ সার্ভার তৈরি করুন।</p>
+                </div>
+                <a href="Project/index.html" class="btn-action">প্রজেক্ট ল্যাব শুরু করুন →</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

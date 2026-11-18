@@ -1,0 +1,9 @@
+{
+  "name": "topic-04-url-query-headers",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "applied": "node applied.js"
+  }
+}

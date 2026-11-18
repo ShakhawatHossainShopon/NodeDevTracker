@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০৩: নেটিভ HTTP সার্ভার ও Request/Response লাইফসাইকেল</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-text: #1e40af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-phase {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.02rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .diagram-container {
+            background-color: var(--surface-subtle);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .diagram-svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .step-box {
+            background: var(--surface-subtle);
+            border-left: 4px solid var(--accent);
+            padding: 1.2rem 1.4rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.25rem;
+        }
+
+        .step-box h4 {
+            color: var(--text-main);
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .action-banner {
+            background: var(--accent-light);
+            border: 1px solid var(--accent-border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-text h3 {
+            color: var(--tag-text);
+            margin: 0 0 0.25rem 0;
+            font-size: 1.2rem;
+        }
+
+        .action-text p {
+            color: var(--text-body);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-lab {
+            background-color: var(--accent);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-lab:hover {
+            background-color: #15803d;
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../../index.html" class="nav-back">← মাস্টার ট্র্যাকারে ফিরে যান (Master Tracker)</a>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">ফেজ ০১: Node.js ওয়েব ফান্ডামেন্টালস</span>
+                <span class="badge badge-topic">টপিক ০৩</span>
+            </div>
+            <h1>নেটিভ HTTP সার্ভার ও Request/Response লাইফসাইকেল</h1>
+            <p class="subtitle">সহজ বাংলায় জানুন: ইউজার যখন ব্রাউজারে এন্টার চাপে, তখন থেকে শুরু করে রেসপন্স ফেরত যাওয়া পর্যন্ত ব্যাকগ্রাউন্ডে ঠিক কোন কোন ধাপে কাজগুলো ঘটে।</p>
+        </header>
+
+        <!-- Section 1: The Lifecycle Overview -->
+        <section class="card">
+            <h2>🔄 ১. একটি HTTP রিকোয়েস্টের জীবনচক্র (Life Cycle)</h2>
+            <p>
+                যখন কোনো ইউজার আপনার সার্ভারের ইউআরএলে (যেমন <code>http://localhost:3000/profile</code>) ভিজিট করে, একটি পূর্ণাঙ্গ লাইফসাইকেল শুরু হয়:
+            </p>
+
+            <div class="diagram-container">
+                <svg class="diagram-svg" viewBox="0 0 740 180" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Step 1 -->
+                    <rect x="10" y="60" width="125" height="60" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+                    <text x="72" y="87" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#0f172a">১. TCP সকেট</text>
+                    <text x="72" y="104" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#64748b">কানেকশন তৈরি</text>
+
+                    <!-- Arrow -->
+                    <path d="M 135 90 L 165 90" stroke="#16a34a" stroke-width="2"/>
+
+                    <!-- Step 2 -->
+                    <rect x="165" y="60" width="130" height="60" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                    <text x="230" y="87" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#15803d">২. HTTP Parser</text>
+                    <text x="230" y="104" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#166534">হেডার পড়ে `req` তৈরি</text>
+
+                    <!-- Arrow -->
+                    <path d="M 295 90 L 325 90" stroke="#16a34a" stroke-width="2"/>
+
+                    <!-- Step 3 -->
+                    <rect x="325" y="55" width="145" height="70" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                    <text x="397" y="85" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#1d4ed8">৩. createServer</text>
+                    <text x="397" y="102" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1e40af">কলব্যাক ফাংশন চালু</text>
+
+                    <!-- Arrow -->
+                    <path d="M 470 90 L 500 90" stroke="#16a34a" stroke-width="2"/>
+
+                    <!-- Step 4 -->
+                    <rect x="500" y="60" width="115" height="60" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+                    <text x="557" y="87" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#0f172a">৪. `res.end()`</text>
+                    <text x="557" y="104" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#64748b">ডাটা পাঠানো শেষ</text>
+
+                    <!-- Arrow -->
+                    <path d="M 615 90 L 645 90" stroke="#16a34a" stroke-width="2"/>
+
+                    <!-- Step 5 -->
+                    <rect x="645" y="60" width="85" height="60" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+                    <text x="687" y="87" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#334155">৫. finish</text>
+                    <text x="687" y="104" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#64748b">ইভেন্ট ফায়ার</text>
+                </svg>
+            </div>
+
+            <div class="step-box">
+                <h4>ধাপ ১: ক্লায়েন্ট থেকে রিকোয়েস্ট আসে (TCP Socket)</h4>
+                <p>ব্রাউজার সার্ভারের ৩০০০ পোর্টে একটি কানেকশন ওপেন করে বাইনারি ডাটা পাঠানো শুরু করে।</p>
+            </div>
+
+            <div class="step-box">
+                <h4>ধাপ ২: Node.js এর HTTP পার্সার সক্রিয় হয়</h4>
+                <p>বাইনারি ডাটা থেকে মেথড (GET, POST), ইউআরএল ও হেডার পড়ে Node.js একটি <code>req</code> অবজেক্ট তৈরি করে।</p>
+            </div>
+
+            <div class="step-box">
+                <h4>ধাপ ৩: আপনার কোড রেসপন্স তৈরি করে</h4>
+                <p>আপনার লেখা ফাংশনে স্ট্যাটাস কোড (200, 404) ও হেডার সেট করা হয় এবং <code>res.end(data)</code> কল করা হয়।</p>
+            </div>
+
+            <div class="step-box">
+                <h4>ধাপ ৪: `res.on('finish')` - রেসপন্স সম্পন্ন হওয়া</h4>
+                <p>যখন সব ডাটা ব্রাউজারের উদ্দেশ্যে পাঠিয়ে দেওয়া শেষ হয়, তখন <code>finish</code> ইভেন্ট ফায়ার করে। আমরা এই ইভেন্ট ব্যবহার করে সার্ভারের রেসপন্স টাইম (Latency) মাপতে পারি!</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Measuring Request Duration -->
+        <section class="card">
+            <h2>⏱️ ২. সার্ভারের গতি বা Latency মাপা কেন দরকার?</h2>
+            <p>
+                প্রোডাকশন লেভেলের ব্যাকএন্ডে সবচেয়ে গুরুত্বপূর্ণ বিষয়গুলোর একটি হলো—<strong>একটি রিকোয়েস্ট হ্যান্ডেল করতে সার্ভার কত মিলিসেকেন্ড সময় নিল?</strong>
+            </p>
+            <p>
+                আমরা রিকোয়েস্ট আসার সময় শুরুর টাইম (<code>Date.now()</code>) রেকর্ড করব এবং যখন রেসপন্স পাঠানো শেষ হবে (<code>res.on('finish')</code>), তখন বিয়োগ করে বের করব রিকোয়েস্টটি সম্পন্ন হতে কত মিলিসেকেন্ড লাগল:
+            </p>
+
+            <pre><code>import http from 'node:http';
+
+const server = http.createServer((req, res) => {
+  const startTime = Date.now(); // রিকোয়েস্ট আসার সময়
+
+  // রেসপন্স শেষ হলে এই ইভেন্টটি অটোমেটিক চলবে
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+    console.log(`[${req.method}] ${req.url} -> Status: ${res.statusCode} | Duration: ${duration}ms`);
+  });
+
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ status: 'ok', message: 'Hello World' }));
+});
+
+server.listen(3000);</code></pre>
+        </section>
+
+        <!-- Section 3: Hands-On Action Banner -->
+        <div class="action-banner">
+            <div class="action-text">
+                <h3>টপিক ০৩ ল্যাব প্রজেক্ট দেখতে প্রস্তুত?</h3>
+                <p>ল্যাব ফোল্ডারে গিয়ে লাইফসাইকেল লগার ও টাইমিং সার্ভার প্রজেক্টটি লক্ষ্য করুন।</p>
+            </div>
+            <a href="Project/index.html" class="btn-lab">টপিক ০৩ ল্যাব খুলুন →</a>
+        </div>
+    </div>
+</body>
+</html>

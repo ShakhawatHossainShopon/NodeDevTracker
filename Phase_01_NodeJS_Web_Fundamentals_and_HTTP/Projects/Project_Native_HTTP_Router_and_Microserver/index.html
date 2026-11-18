@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফেজ ০১ ক্যাপস্টোন প্রজেক্ট গাইড: Native HTTP Micro-Server & Web Router</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2.1rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--surface-subtle);
+            color: var(--text-main);
+            text-align: left;
+            padding: 0.85rem 1rem;
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+        }
+
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .notice-box {
+            background: var(--accent-light);
+            border: 1px solid var(--accent-border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .notice-box strong {
+            color: var(--tag-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../../../index.html" class="nav-link">🏠 মাস্টার ট্র্যাকার</a>
+            <a href="../../Topics/06_Serving_Static_Files_with_Node_FS/index.html" class="nav-link">⬅️ টপিক ০৬ স্টাডি গাইড</a>
+        </div>
+
+        <header>
+            <span class="badge">ফেজ ০১ ফাইনাল ক্যাপস্টোন প্রজেক্ট (হ্যান্ডস-অন টেস্ট)</span>
+            <h1>Native HTTP Micro-Server &amp; Web Router</h1>
+            <p class="subtitle">কোনো এক্সটার্নাল প্যাকেজ বা ফ্রেমওয়ার্ক ছাড়া পিওর Node.js দিয়ে একটি ফুল-ফিচার্ড মাইক্রো-সার্ভার আর্কিটেক্ট করার চূড়ান্ত পরীক্ষা।</p>
+        </header>
+
+        <div class="notice-box">
+            <strong>📝 ক্যাপস্টোন টেস্ট নিয়মাবলী:</strong><br>
+            এই ক্যাপস্টোন প্রজেক্টের কোনো রেডিমেড কোড নেই। টপিক ০১-০৬ পর্যন্ত যা শিখেছেন, তার ভিত্তিতে আপনি নিজেই <code>index.js</code>-এ স্ক্র্যাচ থেকে পুরো সার্ভারটি তৈরি করবেন। আমি একজন মেন্টর ও গাইড হিসেবে আপনাকে ধাপে ধাপে কী করতে হবে তা বলব এবং সহায়তা করব।
+        </div>
+
+        <section class="card">
+            <h2>🎯 ক্যাপস্টোনের এপিআই এন্ডপয়েন্ট সমূহ</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>মেথড</th>
+                            <th>এন্ডপয়েন্ট</th>
+                            <th>কাজ ও প্রযুক্তি</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/status</code></td>
+                            <td>সার্ভার হেলথ, আপটাইম ও মেমোরি কনজাম্পশন (process.uptime, heapUsed)</td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/users</code></td>
+                            <td>মেমোরিতে থাকা সব ইউজারের তালিকা রিটার্ন করা (200 OK)</td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/users/:id</code></td>
+                            <td>ডাইনামিক রুট প্যারামিটার ম্যাচিং (Regex) দিয়ে নির্দিষ্ট ইউজার রিটার্ন বা 404</td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/api/search?q=...&amp;limit=...</code></td>
+                            <td>WHATWG searchParams দিয়ে ফিল্টারিং এবং স্লাইস করে লিমিটেড ডাটা প্রদান</td>
+                        </tr>
+                        <tr>
+                            <td><code>POST</code></td>
+                            <td><code>/api/users</code></td>
+                            <td>ইনকামিং বাফার চাঙ্ক স্ট্রিমিং ও পার্সিং, ফিল্ড ভ্যালিডেশন এবং 201 Created রেসপন্স</td>
+                        </tr>
+                        <tr>
+                            <td><code>GET</code></td>
+                            <td><code>/* (Static Files)</code></td>
+                            <td>পাবলিক ফোল্ডারের ফাইলসমূহ (HTML/CSS/JS) সিকিউর পাথ চেক করে ব্রাউজারে পাইপ করা</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📁 ফাইল পরিচিতি</h2>
+            <p><strong><code>index.js</code></strong>: সম্পূর্ণ ব্ল্যাঙ্ক ফাইল। এখানে আপনি নিজে কোড লিখবেন।</p>
+            <p><strong><code>public/</code></strong>: ক্লায়েন্ট ড্যাশবোর্ড রাখা আছে (HTML, CSS, JS), যা সার্ভার ঠিকমতো চললে ব্রাউজারে দেখা যাবে এবং বাটন দিয়ে টেস্ট করা যাবে।</p>
+        </section>
+    </div>
+</body>
+</html>

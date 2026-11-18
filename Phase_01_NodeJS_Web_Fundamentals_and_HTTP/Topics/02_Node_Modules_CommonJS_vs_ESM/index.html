@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০২: Node.js মডিউল সিস্টেম: CommonJS বনাম ES Modules</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-text: #1e40af;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-phase {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.02rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--surface-subtle);
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .alert-box {
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+            border-left: 4px solid;
+            font-size: 0.98rem;
+        }
+
+        .alert-info {
+            background-color: var(--info-bg);
+            border-color: var(--info-border);
+            color: var(--info-text);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sub-card {
+            background: var(--surface-subtle);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .sub-card h4 {
+            color: var(--text-main);
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-banner {
+            background: var(--accent-light);
+            border: 1px solid var(--accent-border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-text h3 {
+            color: var(--tag-text);
+            margin: 0 0 0.25rem 0;
+            font-size: 1.2rem;
+        }
+
+        .action-text p {
+            color: var(--text-body);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-lab {
+            background-color: var(--accent);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-lab:hover {
+            background-color: #15803d;
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../../index.html" class="nav-back">← মাস্টার ট্র্যাকারে ফিরে যান (Master Tracker)</a>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">ফেজ ০১: Node.js ওয়েব ফান্ডামেন্টালস</span>
+                <span class="badge badge-topic">টপিক ০২</span>
+            </div>
+            <h1>Node.js মডিউল সিস্টেম: CommonJS বনাম ES Modules</h1>
+            <p class="subtitle">সহজ বাংলায় জানুন: ওয়েব অ্যাপ্লিকেশনে কোড আলাদা আলাদা ফাইলে ভাগ করার নিয়ম, <code>require</code> বনাম <code>import</code> এর পার্থক্য এবং কেন আধুনিক ওয়েবে ES Modules ব্যবহার করা হয়।</p>
+        </header>
+
+        <!-- Section 1: Why Modules -->
+        <section class="card">
+            <h2>📦 ১. মডিউল সিস্টেম কেন প্রয়োজন?</h2>
+            <p>
+                বাস্তব জীবনের কোনো ওয়েব অ্যাপ্লিকেশনে (যেমন ই-কমার্স বা সোশ্যাল মিডিয়া) হাজার হাজার লাইনের কোড থাকে। আপনি যদি সব কোড একটা ফাইলেই (যেমন <code>server.js</code>) লিখে রাখেন, তাহলে কোড পড়া ও ম্যানেজ করা অসম্ভব হয়ে পড়বে।
+            </p>
+            <p>
+                <strong>মডিউল সিস্টেমের মাধ্যমে:</strong>
+            </p>
+            <ul>
+                <li>ইউজার রিলেটেড কাজগুলো <code>userService.js</code> এ রাখা যায়।</li>
+                <li>ডাটাবেসের কাজগুলো <code>db.js</code> এ আলাদা রাখা যায়।</li>
+                <li>একটি ফাইলের ফাংশন অন্য ফাইলে <strong>Export</strong> ও <strong>Import</strong> করে বারবার ব্যবহার করা যায়।</li>
+            </ul>
+        </section>
+
+        <!-- Section 2: CommonJS vs ESM -->
+        <section class="card">
+            <h2>⚔️ ২. CommonJS (CJS) বনাম ECMAScript Modules (ESM)</h2>
+            <p>Node.js এ মূলত দুটি মডিউল সিস্টেম কাজ করে:</p>
+
+            <div class="grid-2">
+                <div class="sub-card">
+                    <h4>১. CommonJS (CJS) - Node-এর আদি সিস্টেম</h4>
+                    <p style="font-size: 0.95rem;">২০০৯ সালে Node.js তৈরির সময় এটি আনা হয়েছিল। ফাইল লোড করতে <code>require()</code> এবং এক্সপোর্ট করতে <code>module.exports</code> ব্যবহার করা হয়।</p>
+                    <pre style="margin: 0.5rem 0;"><code>// CJS এ এক্সপোর্ট
+const add = (a, b) => a + b;
+module.exports = { add };
+
+// CJS এ ইমপোর্ট
+const { add } = require('./math.js');</code></pre>
+                </div>
+
+                <div class="sub-card">
+                    <h4>২. ES Modules (ESM) - আধুনিক স্ট্যান্ডার্ড</h4>
+                    <p style="font-size: 0.95rem;">২০১৫ সালে জাভাস্ক্রিপ্টের অফিশিয়াল স্ট্যান্ডার্ড (ES6) হিসেবে আসে। ব্রাউজার ও আধুনিক Node.js উভয় জায়গাতেই <code>import</code> এবং <code>export</code> কাজ করে।</p>
+                    <pre style="margin: 0.5rem 0;"><code>// ESM এ এক্সপোর্ট
+export const add = (a, b) => a + b;
+
+// ESM এ ইমপোর্ট
+import { add } from './math.js';</code></pre>
+                </div>
+            </div>
+
+            <h3>📊 গুরুত্বপূর্ণ পার্থক্যসমূহ:</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>বৈশিষ্ট্য</th>
+                            <th>CommonJS (CJS)</th>
+                            <th>ES Modules (ESM) ⭐ (আধুনিক)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>সিনট্যাক্স</strong></td>
+                            <td><code>require()</code> / <code>module.exports</code></td>
+                            <td><code>import</code> / <code>export</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>লোডিং মেকানিজম</strong></td>
+                            <td>সিঙ্ক্রোনাস (Synchronous)</td>
+                            <td>অ্যাসিনক্রোনাস (Asynchronous) ও ফাস্ট</td>
+                        </tr>
+                        <tr>
+                            <td><strong>টপ-লেভেল Await</strong></td>
+                            <td>সরাসরি কাজ করে না</td>
+                            <td>ফাংশনের বাইরেও সরাসরি <code>await</code> করা যায়</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ব্রাউজার সাপোর্ট</strong></td>
+                            <td>ব্রাউজারে সরাসরি চলে না</td>
+                            <td>আধুনিক সব ব্রাউজার সরাসরি সাপোর্ট করে</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ফাইল পাথ</strong></td>
+                            <td><code>__dirname</code>, <code>__filename</code> আছে</td>
+                            <td><code>import.meta.url</code> ব্যবহার করতে হয়</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3: How to Enable ESM -->
+        <section class="card">
+            <h2>⚙️ ৩. আপনার প্রজেক্টে ES Modules কীভাবে চালু করবেন?</h2>
+            <p>Node.js এ বাই-ডিফল্ট CommonJS কাজ করে। আপনার প্রজেক্টে আধুনিক <code>import / export</code> ব্যবহার করতে চাইলে দুটি সহজ উপায় আছে:</p>
+
+            <div class="explain-box">
+                <h4>উপায় ১: package.json এ `"type": "module"` লেখা (সেরা উপায়)</h4>
+                <p>আপনার প্রজেক্টের <code>package.json</code> ফাইলে শুধু একটি লাইন যুক্ত করে দিন:</p>
+                <pre><code>{
+  "name": "my-web-app",
+  "version": "1.0.0",
+  "type": "module"
+}</code></pre>
+                <p>এখন থেকে আপনার প্রজেক্টের সব <code>.js</code> ফাইল স্বয়ংক্রিয়ভাবে ES Module হিসেবে কাজ করবে!</p>
+            </div>
+
+            <div class="explain-box">
+                <h4>উপায় ২: ফাইলের এক্সটেনশন <code>.mjs</code> দেওয়া</h4>
+                <p><code>package.json</code> পরিবর্তন না করেও যেকোনো ফাইলের নাম <code>server.mjs</code> দিলে Node.js সেটিকে ESM হিসেবে রান করে।</p>
+            </div>
+
+            <div class="alert-box alert-info">
+                <strong>আধুনিক ব্যাকএন্ড টিপস:</strong> বর্তমানে এক্সপ্রেস, প্রিজমা (Prisma), মনগুজ (Mongoose) এবং সব আধুনিক লাইব্রেরিই ES Modules সাপোর্ট করে। তাই নতুন সব প্রজেক্টে <code>"type": "module"</code> ব্যবহার করাই বর্তমান ইন্ডাস্ট্রি স্ট্যান্ডার্ড।
+            </div>
+        </section>
+
+        <!-- Section 4: Hands-On Action Banner -->
+        <div class="action-banner">
+            <div class="action-text">
+                <h3>টপিক ০২ এর প্রজেক্ট দেখতে চান?</h3>
+                <p>ল্যাব ফোল্ডারে গিয়ে মডিউলার ইউটিলিটি এক্সপোর্ট ও ইমপোর্টের প্রজেক্টটি লক্ষ্য করুন।</p>
+            </div>
+            <a href="Project/index.html" class="btn-lab">টপিক ০২ ল্যাব খুলুন →</a>
+        </div>
+    </div>
+</body>
+</html>

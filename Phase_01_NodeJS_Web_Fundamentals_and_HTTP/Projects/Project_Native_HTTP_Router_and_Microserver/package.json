@@ -1,0 +1,9 @@
+{
+  "name": "phase-01-capstone-native-http-router",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  }
+}

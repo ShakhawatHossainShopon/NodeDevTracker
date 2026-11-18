@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ল্যাব ০৪: URL Path, Query ও Headers পার্সিং</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 1.85rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../index.html" class="nav-link">📖 টপিক ০৪ স্টাডি গাইড</a>
+            <a href="../../../../index.html" class="nav-link">🏠 মাস্টার ট্র্যাকার</a>
+        </div>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-topic">ফেজ ০১ • টপিক ০৪ ল্যাব</span>
+            </div>
+            <h1>URL Path, Query Parameters ও Headers পার্সার</h1>
+            <p class="subtitle">আধুনিক WHATWG <code>new URL()</code> এবং <code>req.headers</code> দিয়ে যেকোনো ইনকামিং রিকোয়েস্টের পূর্ণাঙ্গ তথ্য রিড করার প্র্যাকটিস।</p>
+        </header>
+
+        <section class="card">
+            <h2>📁 ল্যাব ফাইল স্ট্রাকচার</h2>
+            <div class="grid-2">
+                <div style="background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+                    <h4 style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 0.5rem;">💻 ১. আপনার ব্ল্যাঙ্ক কোডিং স্পেস: <code>index.js</code></h4>
+                    <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">সম্পূর্ণ ফাঁকা ফাইল। স্ক্র্যাচ থেকে নিজে সার্ভার লিখে URL পার্সিং ও হেডার রিড করার কোড লিখুন।</p>
+                    <pre style="margin: 0; padding: 0.75rem;"><code>node index.js</code></pre>
+                </div>
+                <div style="background: var(--accent-light); border: 1px solid var(--accent-border); border-radius: 8px; padding: 1.25rem;">
+                    <h4 style="color: var(--tag-text); font-size: 1.05rem; margin-bottom: 0.5rem;">🌟 ২. রেফারেন্স প্রজেক্ট: <code>applied.js</code></h4>
+                    <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">মাত্র ৪৫ লাইনের পরিষ্কার ও তৈরি রেফারেন্স কোড। কোডের কমেন্ট বাংলায় ও টার্মিনাল লগ সম্পূর্ণ খাঁটি ইংরেজিতে সাজানো।</p>
+                    <pre style="margin: 0; padding: 0.75rem;"><code>node applied.js</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>🧪 টেস্ট করার নির্দেশনা</h2>
+            <p>সার্ভার চালু করার পর ব্রাউজারে বা নতুন টার্মিনালে নিচের লিংকে রিকোয়েস্ট পাঠান:</p>
+            <pre style="margin: 0; padding: 0.85rem;"><code>http://localhost:3000/api/search?q=laptop&limit=5</code></pre>
+            <p style="margin-top: 1rem; font-size: 0.95rem; color: var(--text-muted);">টার্মিনালে মেথড, পাথ, কুয়েরি এবং হেডার তথ্য ইংরেজি লগে দেখতে পাবেন।</p>
+        </section>
+
+        <section class="card">
+            <h2>🚀 কাজ শেষ হলে</h2>
+            <p>আপনার প্র্যাকটিস শেষ হলে চ্যাটে শুধু বলুন <strong>"I am done"</strong>!</p>
+        </section>
+    </div>
+</body>
+</html>

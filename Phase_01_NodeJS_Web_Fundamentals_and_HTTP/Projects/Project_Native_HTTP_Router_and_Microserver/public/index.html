@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 01 Capstone — Native HTTP Micro-Server & Router</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Phase 01 Capstone Project</span>
+      <h1>Native HTTP Micro-Server &amp; Web Router</h1>
+      <p class="subtitle">Zero-dependency, high-performance Node.js web server handling REST endpoints, dynamic route params, query parsing, streaming JSON, and static assets.</p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h3>🚀 Test Endpoints Live</h3>
+        <div class="btn-group">
+          <button id="btn-status" class="btn">1. Server Status (GET /api/status)</button>
+          <button id="btn-users" class="btn">2. List Users (GET /api/users)</button>
+          <button id="btn-user-id" class="btn">3. Dynamic Route (GET /api/users/1)</button>
+          <button id="btn-search" class="btn">4. Query Parsing (GET /api/search?q=developer&limit=3)</button>
+          <button id="btn-post-user" class="btn btn-primary">5. Create User (POST /api/users)</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📡 Server Response Inspector</h3>
+        <div class="status-bar">
+          <span>Status: <strong id="res-status">Idle</strong></span>
+          <span>Latency: <strong id="res-latency">0 ms</strong></span>
+        </div>
+        <pre><code id="res-body">// Click any button above to send a request to the native HTTP router...</code></pre>
+      </div>
+    </div>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

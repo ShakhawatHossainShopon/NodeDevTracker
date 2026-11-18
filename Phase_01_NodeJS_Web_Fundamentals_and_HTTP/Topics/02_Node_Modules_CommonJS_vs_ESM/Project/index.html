@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ল্যাব ০২: Default Export বনাম Named Export প্র্যাকটিস</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 1.95rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.88em;
+            color: #dc2626;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../index.html" class="nav-link">📖 টপিক ০২ স্টাডি গাইড</a>
+            <a href="../../../../index.html" class="nav-link">🏠 মাস্টার ট্র্যাকার</a>
+        </div>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-topic">ফেজ ০১ • টপিক ০২ ল্যাব</span>
+            </div>
+            <h1>Default Export বনাম Named Export প্র্যাকটিস</h1>
+            <p class="subtitle">প্র্যাকটিক্যালি দেখুন কীভাবে <code>export default</code> ফাইলে থাকা নাম ভুলে গিয়ে ইমপোর্টে আপনার দেওয়া যেকোনো নামেই চলে আসে (ঠিক যেমন MongoDB মডেল ও Redux এ ঘটে)!</p>
+        </header>
+
+        <section class="card">
+            <h2>📁 ল্যাব ফাইল স্ট্রাকচার</h2>
+            <div class="grid-2">
+                <div style="background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+                    <h4 style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 0.5rem;">💻 ১. আপনার ব্ল্যাঙ্ক কোডিং স্পেস: <code>index.js</code></h4>
+                    <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">সম্পূর্ণ ফাঁকা ফাইল। <code>userService.js</code> থেকে ডিফল্ট এক্সপোর্টটি ভিন্ন কোনো নামে এবং নেইমড এক্সপোর্টগুলো ব্র্যাকেটে এনে কনসোলে প্রিন্ট করুন।</p>
+                    <pre style="margin: 0; padding: 0.75rem;"><code>node index.js</code></pre>
+                </div>
+                <div style="background: var(--accent-light); border: 1px solid var(--accent-border); border-radius: 8px; padding: 1.25rem;">
+                    <h4 style="color: var(--tag-text); font-size: 1.05rem; margin-bottom: 0.5rem;">🌟 ২. রেফারেন্স প্রজেক্ট: <code>applied.js</code></h4>
+                    <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">মাত্র ১৫-২০ লাইনের সম্পূর্ণ কোড। দেখুন কীভাবে <code>User</code> কে <code>UserModel</code> নামে ইমপোর্ট করেও নির্বিঘ্নে চালানো হয়েছে।</p>
+                    <pre style="margin: 0; padding: 0.75rem;"><code>node applied.js</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>💡 মূল রহস্য: কোড প্রিভিউ</h2>
+            <p><code>userService.js</code> এ আমরা লিখেছি:</p>
+            <pre><code>export default User; // ডিফল্ট (একটাই মান পাঠাচ্ছে)
+export function validateEmail(...) { ... } // নেইমড</code></pre>
+
+            <p>আর <code>applied.js</code> এ আমরা ইমপোর্ট করেছি:</p>
+            <pre><code>// কোনো কার্লি ব্র্যাকেট নেই, নিজের নাম দিয়েছি 'UserModel'!
+// আর কার্লি ব্র্যাকেটে { validateEmail } দিতেই হয়েছে কারণ ওটা Named!
+import UserModel, { validateEmail } from './userService.js';
+
+console.log(UserModel.name); // 'Tanvir Ahmed'</code></pre>
+        </section>
+
+        <section class="card">
+            <h2>🚀 কাজ শেষ হলে</h2>
+            <p>আপনার প্র্যাকটিস শেষ হলে চ্যাটে বলুন <strong>"I am done"</strong>!</p>
+        </section>
+    </div>
+</body>
+</html>

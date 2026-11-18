@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০১: আধুনিক Node.js ওয়েব ল্যান্ডস্কেপ ও নেটিভ HTTP আর্কিটেকচার</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-text: #1e40af;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-phase {
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.02rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .diagram-container {
+            background-color: var(--surface-subtle);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .diagram-svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .alert-box {
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+            border-left: 4px solid;
+            font-size: 0.98rem;
+        }
+
+        .alert-info {
+            background-color: var(--info-bg);
+            border-color: var(--info-border);
+            color: var(--info-text);
+        }
+
+        .alert-warning {
+            background-color: var(--warning-bg);
+            border-color: var(--warning-border);
+            color: var(--warning-text);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sub-card {
+            background: var(--surface-subtle);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .sub-card h4 {
+            color: var(--text-main);
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-banner {
+            background: var(--accent-light);
+            border: 1px solid var(--accent-border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-text h3 {
+            color: var(--tag-text);
+            margin: 0 0 0.25rem 0;
+            font-size: 1.2rem;
+        }
+
+        .action-text p {
+            color: var(--text-body);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-lab {
+            background-color: var(--accent);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-lab:hover {
+            background-color: #15803d;
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../../index.html" class="nav-back">← মাস্টার ট্র্যাকারে ফিরে যান (Master Tracker)</a>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">ফেজ ০১: Node.js ওয়েব ফান্ডামেন্টালস</span>
+                <span class="badge badge-topic">টপিক ০১</span>
+            </div>
+            <h1>আধুনিক Node.js ওয়েব ল্যান্ডস্কেপ ও নেটিভ HTTP আর্কিটেকচার</h1>
+            <p class="subtitle">সহজ বাংলায় বুঝুন: Node.js কীভাবে ওয়েব ব্যাকএন্ড চালায়, ব্রাউজার থেকে রিকোয়েস্ট এলে সার্ভারে কী ঘটে এবং Express.js এর আসল ভিত্তি কী।</p>
+        </header>
+
+        <!-- Section 1: Why Node.js for Web Development -->
+        <section class="card">
+            <h2>🌍 ১. ওয়েব ব্যাকএন্ডে Node.js কেন এত জনপ্রিয়?</h2>
+            <p>
+                সহজ ভাষায় বলতে গেলে, আগেকার দিনের অনেক ট্র্যাডিশনাল ওয়েব সার্ভার (যেমন ক্লাসিক Apache/PHP বা Java) প্রতিটি নতুন ইউজারের রিকোয়েস্টের জন্য কম্পিউটারের একটা করে আস্ত <strong>Thread (থ্রেড)</strong> বুক করে রাখত। এক হাজার ইউজার একসাথে এলে এক হাজার থ্রেড চালু রাখতে প্রচুর RAM শেষ হয়ে সার্ভার স্লো বা ক্র্যাশ হয়ে যেত।
+            </p>
+            <p>
+                <strong>Node.js এই ধারণাই পাল্টে দিয়েছে:</strong>
+            </p>
+            <ul>
+                <li>Node.js চলে <strong>সিঙ্গেল থ্রেড (Single Thread)</strong> কিন্তু <strong>Non-blocking I/O</strong> আর্কিটেকচারে।</li>
+                <li>রেস্তোরাঁর একজন দক্ষ ওয়েটারের মতো—অর্ডার নিয়ে রান্নাঘরে পাঠিয়ে দেয়, তারপর অন্য কাস্টমারের অর্ডার নিতে চলে যায়। রান্নার জন্য ঠায় দাঁড়িয়ে থাকে না!</li>
+                <li>ফলে খুব কম মেমোরি (RAM) খরচ করেই হাজার হাজার ইউজারকে একসাথে হ্যান্ডেল করতে পারে।</li>
+            </ul>
+
+            <div class="grid-2">
+                <div class="sub-card">
+                    <h4>🎯 ওয়েবে Node.js কোথায় সেরা?</h4>
+                    <ul>
+                        <li>RESTful ও GraphQL JSON API তৈরিতে</li>
+                        <li>রিয়েল-টাইম চ্যাট ও নোটিফিকেশন সার্ভারে (WebSockets)</li>
+                        <li>React, Vue বা Next.js এর ডেডিকেটেড ব্যাকএন্ড হিসেবে</li>
+                        <li>মাইক্রোসার্ভিস আর্কিটেকচারে</li>
+                    </ul>
+                </div>
+                <div class="sub-card">
+                    <h4>🛠️ আধুনিক ওয়েব স্ট্যাক:</h4>
+                    <ul>
+                        <li><strong>ফ্রেমওয়ার্ক:</strong> Express.js, Fastify</li>
+                        <li><strong>ডাটাবেস:</strong> MongoDB (Mongoose), PostgreSQL/MySQL (Prisma, Sequelize)</li>
+                        <li><strong>আর্কিটেকচার:</strong> MVC (Model-View-Controller)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Native node:http Module -->
+        <section class="card">
+            <h2>⚙️ ২. নেটিভ `node:http` মডিউল কী এবং কীভাবে কাজ করে?</h2>
+            <p>
+                আমরা পরবর্তীতে যখন <strong>Express.js</strong> ফ্রেমওয়ার্ক শিখব, মনে রাখবেন—Express কিন্তু নিজে নিজে নেটওয়ার্ক হ্যান্ডেল করে না! সে তৈরি হয়েছে Node.js এর ভেতরে থাকা নেটিভ <code>node:http</code> মডিউলের ওপর ভর করে।
+            </p>
+
+            <div class="diagram-container">
+                <svg class="diagram-svg" viewBox="0 0 740 180" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Client -->
+                    <rect x="15" y="55" width="115" height="70" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+                    <text x="72" y="88" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#0f172a">ইউজার / ব্রাউজার</text>
+                    <text x="72" y="106" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#64748b">HTTP Request</text>
+
+                    <!-- Arrow Request -->
+                    <path d="M 130 75 L 210 75" stroke="#16a34a" stroke-width="2"/>
+                    <text x="170" y="68" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#16a34a" font-weight="700">রিকোয়েস্ট যায়</text>
+
+                    <!-- Native HTTP Server -->
+                    <rect x="210" y="30" width="310" height="120" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                    <text x="365" y="55" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="700" fill="#15803d">http.createServer((req, res) => { ... })</text>
+
+                    <!-- IncomingMessage -->
+                    <rect x="230" y="70" width="125" height="65" rx="4" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+                    <text x="292" y="93" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="700" fill="#0f172a">req (রিকোয়েস্ট)</text>
+                    <text x="292" y="110" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#475569">method, url, headers</text>
+                    <text x="292" y="125" text-anchor="middle" font-family="sans-serif" font-size="8.5" fill="#64748b">ইউজার কী চাইল?</text>
+
+                    <!-- ServerResponse -->
+                    <rect x="375" y="70" width="125" height="65" rx="4" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+                    <text x="437" y="93" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="700" fill="#0f172a">res (রেসপন্স)</text>
+                    <text x="437" y="110" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#475569">statusCode, setHeader</text>
+                    <text x="437" y="125" text-anchor="middle" font-family="sans-serif" font-size="8.5" fill="#64748b">আমরা কী ফেরত পাঠাব?</text>
+
+                    <!-- Arrow Response -->
+                    <path d="M 210 105 L 130 105" stroke="#2563eb" stroke-width="2"/>
+                    <text x="170" y="120" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2563eb" font-weight="700">রেসপন্স আসে</text>
+
+                    <!-- Frameworks -->
+                    <rect x="555" y="55" width="170" height="70" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="640" y="85" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1d4ed8">Express.js ফ্রেমওয়ার্ক</text>
+                    <text x="640" y="104" text-anchor="middle" font-family="sans-serif" font-size="9.5" fill="#1e40af">এই `req` ও `res` কেই সহজ করে</text>
+                </svg>
+            </div>
+
+            <h3>খুব সাধারণ একটি নেটিভ HTTP সার্ভার কোড:</h3>
+            <pre><code>import http from 'node:http';
+
+// ১. সার্ভার তৈরি করা
+const server = http.createServer((req, res) => {
+  console.log(`ইউজারের রিকোয়েস্ট: ${req.method} ${req.url}`);
+
+  // ২. স্ট্যাটাস কোড ও হেডার সেট করা
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+  // ৩. ডাটা পাঠানো এবং কানেকশন শেষ করা
+  const responseData = {
+    message: 'স্বাগতম! আমাদের Node.js সার্ভার চালু আছে।',
+    status: 'success'
+  };
+
+  res.end(JSON.stringify(responseData));
+});
+
+// ৩০০০ পোর্টে সার্ভার চালানো
+server.listen(3000, () => {
+  console.log('সার্ভার রানিং: http://localhost:3000');
+});</code></pre>
+        </section>
+
+        <!-- Section 3: Req and Res Anatomy -->
+        <section class="card">
+            <h2>📦 ৩. `req` (রিকোয়েস্ট) এবং `res` (রেসপন্স) এ কী থাকে?</h2>
+            
+            <div class="grid-2">
+                <div class="sub-card">
+                    <h4>📥 Request (`req`): ক্লায়েন্ট থেকে আসা তথ্য</h4>
+                    <ul>
+                        <li><code>req.method</code>: ইউজার কী কাজ করতে চাচ্ছে? (<code>GET</code> ডাটা দেখতে, <code>POST</code> নতুন ডাটা পাঠাতে, <code>DELETE</code> মুছতে)।</li>
+                        <li><code>req.url</code>: ইউজার কোন লিংকে ঢুকছে? (যেমন <code>/products?category=phone</code>)।</li>
+                        <li><code>req.headers</code>: ইউজারের বাড়তি তথ্য (যেমন টোকেন <code>authorization</code>, ব্রাউজারের নাম ইত্যাদি)।</li>
+                    </ul>
+                </div>
+
+                <div class="sub-card">
+                    <h4>📤 Response (`res`): সার্ভার থেকে ফেরত পাঠানো তথ্য</h4>
+                    <ul>
+                        <li><code>res.statusCode</code>: ৩ ডিজিটের স্ট্যাটাস কোড (২০০ মানে সফল, ২০১ মানে তৈরি হয়েছে, ৪০৪ মানে পেজ পাওয়া যায়নি, ৫০০ মানে সার্ভারে এরর)।</li>
+                        <li><code>res.setHeader()</code>: ব্রাউজারকে জানানো ডাটার ধরন কী (JSON নাকি HTML)।</li>
+                        <li><code>res.end(data)</code>: ডাটা পাঠিয়ে কানেকশন ইতি টানা।</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="alert-box alert-info">
+                <strong>মূল কথা:</strong> আপনি যখন Express এ <code>app.get('/users', (req, res) => res.json(...))</code> লিখবেন, তখন ব্যাকগ্রাউন্ডে ঠিক এই মেকানিজমটাই ঘটে। তাই নেটিভ কনসেপ্ট ক্লিয়ার থাকলে এক্সপ্রেসে কাজ করা পানির মত সহজ মনে হবে!
+            </div>
+        </section>
+
+        <!-- Section 4: Hands-On Action Banner -->
+        <div class="action-banner">
+            <div class="action-text">
+                <h3>হাতে-কলমে প্র্যাকটিস করতে প্রস্তুত?</h3>
+                <p>টপিক ০১ এর ল্যাবে যান এবং নিজে কোড লিখে নেটিভ রাউটার ও JSON রেসপন্ডার বানান।</p>
+            </div>
+            <a href="Project/index.html" class="btn-lab">টপিক ০১ ল্যাব খুলুন →</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ল্যাব ০১: বাইনারি ডাটা হ্যান্ডলিং ও Node.js Buffer ক্লাস</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --accent-border: #bfdbfe;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dbeafe;
+            --tag-text: #1d4ed8;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --step-active: #dbeafe;
+            --step-active-text: #1e40af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 1.95rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.25rem 0 0.5rem 0;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            border: 1px solid #1e293b;
+        }
+
+        pre code {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .step-block {
+            border-left: 4px solid var(--accent);
+            padding-left: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-pill {
+            background: var(--step-active);
+            color: var(--step-active-text);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .endpoint-pill {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #0f172a;
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+        }
+
+        .method-get {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .method-post {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../index.html" class="nav-link">← টপিক ০১ স্টাডি গাইড</a>
+            <a href="../../../index.html" class="nav-link">মাস্টার ট্র্যাকার</a>
+        </div>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-topic">Project Lab 01</span>
+                <span class="badge" style="background: #f1f5f9; color: #475569;">Hands-on Coding</span>
+            </div>
+            <h1>ল্যাব ০১: বাইনারি ডাটা হ্যান্ডলিং ও Node.js Buffer ক্লাস</h1>
+            <p class="subtitle">বাফার এনকোডিং, মাল্টিবাইট ক্যারেক্টার সাইজ গণনা, বেসিক অথ ডিকোড এবং বাইনারি ইমেজ সরাসরি HTTP-তে সার্ভ করার প্র্যাকটিক্যাল ল্যাব।</p>
+        </header>
+
+        <section class="card">
+            <h2>🎯 ল্যাবের আর্কিটেকচার ও এন্ডপয়েন্টসমূহ</h2>
+            <p>এই ল্যাবে আমরা একটি পূর্ণাঙ্গ বাইনারি-সচেতন ওয়েব সার্ভার আর্কিটেক্ট করব। এতে ৩টি গুরুত্বপূর্ণ এন্ডপয়েন্ট থাকবে:</p>
+
+            <div style="margin: 1.25rem 0;">
+                <div style="margin-bottom: 0.75rem;">
+                    <span class="endpoint-pill method-get">GET</span>
+                    <code>/api/buffer-inspect?text=...</code>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 0.95rem; color: var(--text-muted);">টেক্সটের স্ট্রিং লেংথ বনাম আসল বাইট সাইজ এবং হেক্স ও বেইজ৬৪ রিপ্রেজেন্টেশন রিটার্ন করে।</p>
+                </div>
+                <div style="margin-bottom: 0.75rem;">
+                    <span class="endpoint-pill method-get">GET</span>
+                    <code>/api/auth-decode</code>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 0.95rem; color: var(--text-muted);">ইনকামিং HTTP <code>Authorization: Basic &lt;base64&gt;</code> হেডারকে বাফার মেমোরির মাধ্যমে ডিকোড করে।</p>
+                </div>
+                <div>
+                    <span class="endpoint-pill method-get">GET</span>
+                    <code>/api/pixel.png</code>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 0.95rem; color: var(--text-muted);">মেমোরিতে থাকা র বাইনারি বাফার (১x১ ট্রান্সপারেন্ট PNG) সরাসরি <code>image/png</code> হেডারে সার্ভ করে।</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>🛠️ ধাপে ধাপে বাস্তবায়ন (Step-by-Step Implementation)</h2>
+
+            <!-- Step 1 -->
+            <div class="step-block">
+                <div class="step-title">
+                    <span class="step-pill">ধাপ ১</span>
+                    <h3 style="margin:0;">নেটিভ সার্ভার সেটআপ ও বাফার ইন্সপেক্টর এন্ডপয়েন্ট</h3>
+                </div>
+                <p><code>node:http</code> এবং <code>node:buffer</code> ইমপোর্ট করে সার্ভার চালু করব এবং <code>/api/buffer-inspect</code> এন্ডপয়েন্ট হ্যান্ডল করব। এটি <code>Buffer.byteLength()</code> বনাম <code>str.length</code> এর স্পষ্ট তুলনা আউটপুট দেবে।</p>
+                <p><strong>টেস্ট কুয়েরি:</strong> <code>http://localhost:3000/api/buffer-inspect?text=Node.js%20বাংলা</code></p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-block">
+                <div class="step-title">
+                    <span class="step-pill">ধাপ ২</span>
+                    <h3 style="margin:0;">HTTP Basic Authentication হেডার ডিকোডার</h3>
+                </div>
+                <p><code>req.headers['authorization']</code> থেকে Base64 ক্রেডেনশিয়াল এক্সট্র্যাক্ট করে <code>Buffer.from(base64, 'base64').toString('utf-8')</code> মেথডে ডিকোড করে ইউজারনেম ও পাসওয়ার্ড পৃথক করা হবে। হেডার না থাকলে ৪০১ আনঅথোরাইজড রেসপন্স দেবে।</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-block">
+                <div class="step-title">
+                    <span class="step-pill">ধাপ ৩</span>
+                    <h3 style="margin:0;">বাইনারি ইমেজ বাফার সরাসরি সার্ভ করা</h3>
+                </div>
+                <p>মেমোরিতে সংরক্ষিত ১x১ ট্রান্সপারেন্ট PNG বাফারকে <code>Content-Type: image/png</code> এবং <code>Content-Length: buffer.length</code> সহ <code>res.end(PIXEL_BUFFER)</code> দিয়ে সরাসরি ক্লায়েন্টে স্ট্রিম করা হবে।</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>🧪 কীভাবে রান এবং টেস্ট করবেন</h2>
+            <p>আপনার টার্মিনালে এই ফোল্ডারে এসে ওয়াচ মোডে সার্ভার চালু করুন:</p>
+            <pre><code>node --watch index.js</code></pre>
+
+            <h3>টেস্টিং কমান্ডসমূহ (PowerShell বা ব্রাউজার):</h3>
+            <pre><code># ১. বাফার ইন্সপেক্টর টেস্ট:
+curl "http://localhost:3000/api/buffer-inspect?text=Node.js%20বাংলা"
+
+# ২. Basic Auth হেডার ডিকোডার টেস্ট:
+curl -H "Authorization: Basic YWRtaW46c2VjcmV0MTIz" "http://localhost:3000/api/auth-decode"
+
+# ৩. বাইনারি ইমেজ ফেচ টেস্ট:
+curl -I "http://localhost:3000/api/pixel.png"</code></pre>
+        </section>
+    </div>
+</body>
+</html>

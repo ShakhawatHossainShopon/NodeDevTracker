@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০৪: URL Paths, Query Strings ও Request Headers পার্সিং</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-phase {
+            background-color: var(--surface-subtle);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.25rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.88em;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            color: #b91c1c;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background-color: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+
+        .info-box strong {
+            color: var(--tag-text);
+        }
+
+        .warning-box {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--surface-subtle);
+            color: var(--text-main);
+            text-align: left;
+            padding: 0.85rem 1rem;
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+        }
+
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .action-banner {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #86efac;
+            border-radius: 12px;
+            padding: 1.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .action-text h3 {
+            color: #166534;
+            margin: 0 0 0.35rem 0;
+            font-size: 1.25rem;
+        }
+
+        .action-text p {
+            color: #15803d;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-lab {
+            display: inline-block;
+            background-color: var(--accent);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-lab:hover {
+            background-color: #15803d;
+            box-shadow: 0 4px 8px rgba(22, 163, 74, 0.35);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <a href="../../index.html" class="nav-link">🏠 মাস্টার ট্র্যাকার</a>
+            <a href="Project/index.html" class="nav-link">🧪 টপিক ০৪ ল্যাব প্রজেক্ট</a>
+        </div>
+
+        <!-- Header -->
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">ফেজ ০১: Node.js Web Fundamentals</span>
+                <span class="badge badge-topic">টপিক ০৪</span>
+            </div>
+            <h1>Parsing URL Paths, Query Strings &amp; HTTP Request Headers</h1>
+            <p class="subtitle">ইনকামিং রিকোয়েস্টের পাথনেম আলাদা করা, আধুনিক WHATWG URL API দিয়ে কুয়েরি স্ট্রিং পড়া এবং রিকোয়েস্ট হেডারের ভূমিকা ও ব্যবহার।</p>
+        </header>
+
+        <!-- Section 1 -->
+        <section class="card">
+            <h2>১. `req.url` আসলে কী দেয় এবং কেন সরাসরি স্প্লিট করবেন না?</h2>
+            <p>
+                Node.js-এর নেটিভ HTTP সার্ভারে যখন কোনো ক্লায়েন্ট (যেমন ব্রাউজার বা মোবাইল অ্যাপ) রিকোয়েস্ট পাঠায়, তখন <code>req.url</code> প্রোপার্টিতে কিন্তু পুরো ডোমেন থাকে না (যেমন <code>https://myapi.com/users?id=5</code> থাকে না)।
+            </p>
+            <p>
+                বরং <code>req.url</code> শুধুমাত্র রিলেটিভ পাথ এবং কুয়েরি অংশটুকু রিটার্ন করে:
+            </p>
+            <pre><code>// যদি ক্লায়েন্ট রিকোয়েস্ট করে: http://localhost:3000/api/products?category=electronics&limit=10
+console.log(req.url); 
+// আউটপুট: "/api/products?category=electronics&limit=10"</code></pre>
+
+            <div class="warning-box">
+                <strong>⚠️ কেন `req.url.split('?')` করা অনুচিত?</strong><br>
+                অনেকে ম্যানুয়ালি স্ট্রিং স্প্লিট করে পাথ এবং কুয়েরি আলাদা করার চেষ্টা করেন। কিন্তু URL-এ স্পেশাল ক্যারেক্টার এনকোডিং (যেমন <code>%20</code>, স্পেস, হ্যাশ <code>#</code>, বা প্যারামিটারের ভ্যালুতে <code>?</code> চিহ্ন) থাকলে ম্যানুয়াল স্প্লিট ভুল ডাটা দেয় অথবা ক্র্যাশ করে। এর জন্য স্ট্যান্ডার্ড হলো আধুনিক <strong>WHATWG URL API</strong>।
+            </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="card">
+            <h2>২. আধুনিক WHATWG `new URL()` ও `searchParams` API</h2>
+            <p>
+                Node.js-এ বিল্ট-ইন গ্লোবাল <code>URL</code> ক্লাস রয়েছে। যেহেতু <code>req.url</code>-এ ডোমেইন থাকে না, তাই সম্পূর্ণ ভ্যালিড URL অবজেক্ট তৈরি করতে দ্বিতীয় আর্গুমেন্ট হিসেবে হোস্ট (Base URL) পাস করা হয়:
+            </p>
+
+            <pre><code>import http from 'node:http';
+
+const server = http.createServer((req, res) => {
+  // ডোমেইন বেইজ হিসেবে req.headers.host পাস করা হচ্ছে
+  const fullUrl = new URL(req.url, `http://${req.headers.host}`);
+
+  // ১. পাথনেম (Query ছাড়া শুধু রাউট পাথ)
+  const pathname = fullUrl.pathname; // "/api/products"
+
+  // ২. searchParams API ব্যবহার করে কুয়েরি রিড করা
+  const category = fullUrl.searchParams.get('category'); // "electronics"
+  const limit = fullUrl.searchParams.get('limit') || '10'; // "10"
+  const hasSort = fullUrl.searchParams.has('sort'); // true অথবা false
+
+  console.log(`[REQUEST] Path: ${pathname} | Category: ${category} | Limit: ${limit}`);
+});</code></pre>
+
+            <h3>URLSearchParams এর প্রয়োজনীয় মেথডসমূহ:</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>মেথড</th>
+                            <th>উদাহরণ</th>
+                            <th>কাজ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>get(key)</code></td>
+                            <td><code>searchParams.get('q')</code></td>
+                            <td>নির্দিষ্ট কি-এর প্রথম মান ফেরত দেয় (না থাকলে <code>null</code>)।</td>
+                        </tr>
+                        <tr>
+                            <td><code>has(key)</code></td>
+                            <td><code>searchParams.has('page')</code></td>
+                            <td>কুয়েরিতে নির্দিষ্ট কি উপস্থিত আছে কি না (boolean)।</td>
+                        </tr>
+                        <tr>
+                            <td><code>getAll(key)</code></td>
+                            <td><code>searchParams.getAll('tag')</code></td>
+                            <td>একই কি যদি একাধিকবার পাঠানো হয় (যেমন: <code>?tag=js&amp;tag=web</code>), সবগুলোর অ্যারে দেয়।</td>
+                        </tr>
+                        <tr>
+                            <td><code>entries()</code></td>
+                            <td><code>for (const [k, v] of searchParams)</code></td>
+                            <td>সবগুলো কুয়েরি কি-ভ্যালু পেয়ারের ওপর লুপ চালানোর সুবিধা।</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="card">
+            <h2>৩. HTTP Request Headers (`req.headers`) এর আদ্যোপান্ত</h2>
+            <p>
+                HTTP রিকোয়েস্টের সাথে ক্লায়েন্ট অতিরিক্ত মেটাডাটা পাঠায়, যাকে <strong>Request Headers</strong> বলা হয়। Node.js এই হেডারগুলোকে <code>req.headers</code> অবজেক্ট হিসেবে প্রোভাইড করে।
+            </p>
+
+            <div class="info-box">
+                <strong>💡 হেডার কি-গুলো সবসময় Lowercase হয় কেন?</strong><br>
+                ক্লায়েন্ট হয়তো <code>Authorization</code> বা <code>Content-Type</code> লিখে বড় হাতের অক্ষরে পাঠিয়েছে। কিন্তু Node.js পার্স করার সময় সব হেডার কি-কে স্বয়ংক্রিয়ভাবে ছোট হাতের অক্ষরে (lowercase) কনভার্ট করে দেয় (যেমন <code>req.headers['authorization']</code>)। এটি RFC স্ট্যান্ডার্ড অনুযায়ী করা হয় যাতে ডেভেলপারদের কেস-সেনসিটিভ জটিলতায় পড়তে না হয়।
+            </div>
+
+            <h3>সবচেয়ে গুরুত্বপূর্ণ Request Headers:</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>হেডার নাম</th>
+                            <th>প্রবেশের উপায়</th>
+                            <th>ব্যবহারের উদ্দেশ্য</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Host</code></td>
+                            <td><code>req.headers.host</code></td>
+                            <td>সার্ভারের ডোমেইন এবং পোর্ট (যেমন <code>localhost:3000</code>)।</td>
+                        </tr>
+                        <tr>
+                            <td><code>Authorization</code></td>
+                            <td><code>req.headers['authorization']</code></td>
+                            <td>ইউজারের JWT টোকেন বা API Key যাচাই করার জন্য (যেমন <code>Bearer eyJhbG...</code>)।</td>
+                        </tr>
+                        <tr>
+                            <td><code>Content-Type</code></td>
+                            <td><code>req.headers['content-type']</code></td>
+                            <td>ক্লায়েন্ট বডিতে কী ধরনের ডাটা পাঠাচ্ছে (যেমন <code>application/json</code>)।</td>
+                        </tr>
+                        <tr>
+                            <td><code>User-Agent</code></td>
+                            <td><code>req.headers['user-agent']</code></td>
+                            <td>ক্লায়েন্টের ব্রাউজার, ওএস বা ডিভাইস সম্পর্কে তথ্য।</td>
+                        </tr>
+                        <tr>
+                            <td><code>Accept</code></td>
+                            <td><code>req.headers['accept']</code></td>
+                            <td>ক্লায়েন্ট সার্ভারের কাছ থেকে কী ফরম্যাটে ডাটা আশা করছে।</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 4: Hands-On Action Banner -->
+        <div class="action-banner">
+            <div class="action-text">
+                <h3>টপিক ০৪ ল্যাব প্রজেক্ট দেখতে প্রস্তুত?</h3>
+                <p>ল্যাব ফোল্ডারে গিয়ে URL পার্সিং ও হেডার রিড করার পরিচ্ছন্ন কোডটি প্র্যাকটিস করুন।</p>
+            </div>
+            <a href="Project/index.html" class="btn-lab">টপিক ০৪ ল্যাব খুলুন →</a>
+        </div>
+    </div>
+</body>
+</html>

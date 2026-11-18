@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ল্যাব ০১: নেটিভ HTTP রিকোয়েস্ট ডিসপ্যাচার ও JSON রেসপন্ডার</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --info-text: #1e40af;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 1.95rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.25rem 0 0.5rem 0;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.88em;
+            color: #dc2626;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .task-step {
+            border-left: 3px solid var(--accent);
+            padding-left: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .task-step h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .alert-box {
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+            border-left: 4px solid;
+            font-size: 0.98rem;
+        }
+
+        .alert-info {
+            background-color: var(--info-bg);
+            border-color: var(--info-border);
+            color: var(--info-text);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../index.html" class="nav-link">📖 টপিক ০১ স্টাডি গাইড</a>
+            <a href="../../../../index.html" class="nav-link">🏠 মাস্টার ট্র্যাকার</a>
+        </div>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-topic">ফেজ ০১ • টপিক ০১ ল্যাব</span>
+            </div>
+            <h1>নেটিভ HTTP রিকোয়েস্ট ডিসপ্যাচার ও JSON রেসপন্ডার</h1>
+            <p class="subtitle">হাতে-কলমে ওয়েব সার্ভারের মূল স্তম্ভগুলো তৈরি করুন: স্ট্যাটাস কোড সহ JSON রেসপন্স পাঠানো, URL থেকে কুয়েরি প্যারামিটার বের করা এবং রাউটিং হ্যান্ডেল করা।</p>
+        </header>
+
+        <!-- Two-File Workflow Card -->
+        <section class="card">
+            <h2>📁 ল্যাব ফাইল স্ট্রাকচার: কীভাবে কাজ করবেন?</h2>
+            <div class="grid-2">
+                <div style="background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;">
+                    <h4 style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 0.5rem;">💻 ১. আপনার কোডিং ফাইল: <code>index.js</code></h4>
+                    <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">এই ফাইলটিতে <strong>আপনি নিজে কোড লিখবেন</strong>! ভেতরে থাকা <code>TODO</code> সেকশনগুলো দেখে স্টেপ-বাই-স্টেপ ফাংশনগুলো পূরণ করবেন।</p>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.5rem;">রান করার কমান্ড:</p>
+                    <pre style="margin: 0; padding: 0.75rem;"><code>node index.js</code></pre>
+                </div>
+                <div style="background: var(--accent-light); border: 1px solid var(--accent-border); border-radius: 8px; padding: 1.25rem;">
+                    <h4 style="color: var(--tag-text); font-size: 1.05rem; margin-bottom: 0.5rem;">🌟 ২. কমপ্লিট রেফারেন্স প্রজেক্ট: <code>applied.js</code></h4>
+                    <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">এটি একটি <strong>সম্পূর্ণ তৈরি করা ও চালু থাকা প্রজেক্ট</strong>! এটি চালিয়ে আপনি দেখতে পারবেন একটি আসল ওয়েব সার্ভার কীভাবে কাজ করে এবং কোড বুঝতে পারবেন।</p>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.5rem;">রান করার কমান্ড:</p>
+                    <pre style="margin: 0; padding: 0.75rem;"><code>node applied.js</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lab Objectives in Bangla -->
+        <section class="card">
+            <h2>🎯 ল্যাবে যা যা তৈরি করবেন (in <code>index.js</code>)</h2>
+
+            <div class="task-step">
+                <h3>টাস্ক ১: JSON রেসপন্স পাঠানোর ফাংশন (`sendJsonResponse`)</h3>
+                <p>আমরা যখন ব্রাউজার বা মোবাইল অ্যাপে ডাটা পাঠাই, তখন JSON ফরম্যাটে পাঠাতে হয়। এই ফাংশনটি ৩টি কাজ করবে:</p>
+                <ul>
+                    <li><code>res.statusCode = statusCode;</code> (যেমন: ২০০ বা ২০১ সেট করা)</li>
+                    <li><code>res.setHeader('Content-Type', 'application/json');</code> (হেডার সেট করা)</li>
+                    <li><code>res.end(JSON.stringify(data));</code> (অবজেক্টকে স্ট্রিং বানিয়ে ক্লায়েন্টকে পাঠানো)</li>
+                </ul>
+            </div>
+
+            <div class="task-step">
+                <h3>টাস্ক ২: URL ও কুয়েরি প্যারামিটার আলাদা করা (`parseRequestUrl`)</h3>
+                <p>ইউজার যখন <code>/api/courses?category=backend&amp;level=pro</code> লিখে ভিজিট করে:</p>
+                <ul>
+                    <li>পাথনেম (Pathname) আলাদা করা: <code>/api/courses</code></li>
+                    <li>কুয়েরি অবজেক্ট তৈরি করা: <code>{ category: 'backend', level: 'pro' }</code></li>
+                    <li>জাভাস্ক্রিপ্টের নেটিভ <code>new URL(rawUrl, 'http://localhost')</code> ব্যবহার করে এটি রিটার্ন করা।</li>
+                </ul>
+            </div>
+
+            <div class="task-step">
+                <h3>টাস্ক ৩: সিম্পল রাউটার ক্লাস (`HttpDispatcher`)</h3>
+                <p>এক্সপ্রেসের মতো নিজস্ব একটি রাউটার তৈরি করা:</p>
+                <ul>
+                    <li><code>get(path, handler)</code>: GET রিকোয়েস্টের জন্য রুট রেজিস্টার করা।</li>
+                    <li><code>post(path, handler)</code>: POST রিকোয়েস্টের জন্য রুট রেজিস্টার করা।</li>
+                    <li><code>dispatch(req, res)</code>: আসা রিকোয়েস্টের মেথড ও পাথ চেক করে সঠিক হ্যান্ডলার চালানো। যদি পাথ না মেলে, তবে সুন্দর একটি <code>404</code> JSON এরর পাঠানো: <code>{ status: 'fail', message: 'Route not found' }</code>।</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>🚀 কাজ শেষ হলে কী করবেন?</h2>
+            <p>আপনার <code>index.js</code> এ কাজ শেষ হলে বা বুঝে ফেললে চ্যাটে শুধু বলুন <strong>"I am done"</strong> বা <strong>"done"</strong>।</p>
+            <p>আমি মাস্টার ট্র্যাকারে এই টপিকটি সম্পন্ন মার্ক করে পরবর্তী টপিকটি (টপিক ০২) জেনারেট করে দেব!</p>
+        </section>
+    </div>
+</body>
+</html>

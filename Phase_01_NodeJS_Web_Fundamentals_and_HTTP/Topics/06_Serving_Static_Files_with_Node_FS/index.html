@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০৬: Serving Static Files (HTML, CSS, Images) with node:fs</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-subtle);
+            border-color: var(--border-subtle);
+        }
+
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+
+        .badge-phase {
+            background-color: var(--surface-subtle);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .badge-topic {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.25rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.88em;
+            background-color: var(--code-inline-bg);
+            border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            color: #b91c1c;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--code-text);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background-color: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+
+        .info-box strong {
+            color: var(--tag-text);
+        }
+
+        .warning-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--surface-subtle);
+            color: var(--text-main);
+            text-align: left;
+            padding: 0.85rem 1rem;
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+        }
+
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .action-banner {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #86efac;
+            border-radius: 12px;
+            padding: 1.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .action-text h3 {
+            color: #166534;
+            margin: 0 0 0.35rem 0;
+            font-size: 1.25rem;
+        }
+
+        .action-text p {
+            color: #15803d;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-lab {
+            display: inline-block;
+            background-color: var(--accent);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-lab:hover {
+            background-color: #15803d;
+            box-shadow: 0 4px 8px rgba(22, 163, 74, 0.35);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <a href="../../index.html" class="nav-link">🏠 মাস্টার ট্র্যাকার</a>
+            <a href="Project/index.html" class="nav-link">🧪 টপিক ০৬ ল্যাব প্রজেক্ট</a>
+        </div>
+
+        <!-- Header -->
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">ফেজ ০১: Node.js Web Fundamentals</span>
+                <span class="badge badge-topic">টপিক ০৬ (ফাইনাল টপিক)</span>
+            </div>
+            <h1>Serving Static Files (HTML, CSS, Images) with node:fs</h1>
+            <p class="subtitle">MIME টাইপ ডিকশনারি, পাথ ট্রাভার্সাল সিকিউরিটি গার্ড এবং <code>fs.createReadStream().pipe(res)</code> দিয়ে হাই-পারফরম্যান্স ফাইল সার্ভিং।</p>
+        </header>
+
+        <!-- Section 1 -->
+        <section class="card">
+            <h2>১. স্ট্যাটিক ফাইল কী এবং ওয়েব অ্যাপে এর ভূমিকা?</h2>
+            <p>
+                একটি আধুনিক ওয়েব অ্যাপ্লিকেশনে ডাটাবেজ বা এপিআই রেসপন্সের বাইরে কিছু স্থায়ী ফাইল থাকে যা ব্রাউজারকে ডিসপ্লে বা ডিজাইনের জন্য দেখাতে হয়—এদেরকে বলা হয় <strong>স্ট্যাটিক ফাইলস (Static Files / Assets)</strong>। যেমন:
+            </p>
+            <ul>
+                <li><strong>HTML ফাইলস:</strong> ওয়েবসাইটের পেজ স্ট্রাকচার (যেমন <code>index.html</code>, <code>about.html</code>)</li>
+                <li><strong>CSS ফাইলস:</strong> ডিজাইন ও লেআউট (যেমন <code>style.css</code>)</li>
+                <li><strong>JavaScript ফাইলস:</strong> ক্লায়েন্ট-সাইড ইন্টারঅ্যাক্টিভিটি (যেমন <code>app.js</code>)</li>
+                <li><strong>মিডিয়া ও ফন্টস:</strong> ইমেজ (<code>.png</code>, <code>.jpg</code>, <code>.svg</code>), আইকন (<code>favicon.ico</code>) ইত্যাদি</li>
+            </ul>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="card">
+            <h2>২. MIME Type কেন এত বেশি গুরুত্বপূর্ণ?</h2>
+            <p>
+                আপনি যদি হার্ডডিস্ক থেকে একটি <code>style.css</code> ফাইল পড়ে ক্লায়েন্টকে পাঠান, কিন্তু হেডারে না বলেন যে এটি কী ফাইল, তবে আধুনিক ব্রাউজার (Chrome, Edge, Safari) সিকিউরিটি পলিসির কারণে <strong>স্টাইলশিট রেন্ডার করতে অস্বীকার করবে</strong>!
+            </p>
+            <div class="warning-box">
+                <strong>⚠️ সাধারণ ব্রাউজার এরর:</strong><br>
+                <code>Refused to apply style from 'http://localhost:3000/style.css' because its MIME type ('text/plain') is not a supported stylesheet MIME type.</code>
+            </div>
+            <p>
+                তাই আমাদের এক্সটেনশন অনুযায়ী সঠিক <code>Content-Type</code> হেডার পাঠাতে একটি <strong>MIME Types Map</strong> ব্যবহার করতে হয়:
+            </p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ফাইল এক্সটেনশন</th>
+                            <th>MIME Type (Content-Type Header)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>.html</code></td>
+                            <td><code>text/html; charset=utf-8</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>.css</code></td>
+                            <td><code>text/css; charset=utf-8</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>.js</code></td>
+                            <td><code>text/javascript; charset=utf-8</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>.json</code></td>
+                            <td><code>application/json; charset=utf-8</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>.png</code></td>
+                            <td><code>image/png</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>.svg</code></td>
+                            <td><code>image/svg+xml</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="card">
+            <h2>৩. মারাত্মক সিকিউরিটি থ্রেট: Directory Traversal অ্যাটাক</h2>
+            <p>
+                যদি একজন ডেভেলপার সহজভাবে লেখেন:
+                <code>const filePath = path.join(publicFolder, req.url);</code>
+            </p>
+            <p>
+                তাহলে একজন হ্যাকার অনায়াসে ব্রাউজারে বা curl দিয়ে রিকোয়েস্ট পাঠাতে পারে:
+                <code>GET /../../../../etc/passwd</code> অথবা <code>GET /../../package.json</code> বা <code>.env</code> ফাইল!
+                এতে সার্ভারের পাবলিক ফোল্ডারের বাইরে গিয়ে আপনার ডাটাবেজ পাসওয়ার্ড বা পুরো সার্ভারের সিস্টেম ফাইল হ্যাকারের কাছে চলে যাবে!
+            </p>
+
+            <div class="info-box">
+                <strong>🛡️ ডিরেক্টরি ট্রাভার্সাল প্রতিরোধের নিয়ম:</strong><br>
+                ফাইল সার্ভ করার আগে সবসময় নিশ্চিত হতে হবে যে রিকোয়েস্ট করা ফাইলের আসল অ্যাবসোলিউট পাথ <code>PUBLIC_DIR</code> এর ভেতরেই অবস্থান করছে কি না:
+                <pre><code>const safePath = path.join(PUBLIC_DIR, path.normalize(req.url));
+
+// যদি ফাইল পাবলিক ডিরেক্টরির বাইরে যেতে চায়, সাথে সাথে ৪০৩ Forbidden!
+if (!safePath.startsWith(PUBLIC_DIR)) {
+  res.statusCode = 403;
+  return res.end('Access Denied');
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="card">
+            <h2>৪. `fs.readFile()` বনাম `fs.createReadStream().pipe(res)`</h2>
+            <p>
+                ফাইল পাঠাতে <code>fs.readFile()</code> ব্যবহার করলে পুরো ফাইলের সাইজ প্রথমে সার্ভারের র‍্যামে (RAM) লোড হয়। একটি ১০ মেগাবাইটের ইমেজ ১০০ জন একই সাথে চাইলে ১ গিগাবাইট র‍্যাম খরচ হয়ে সার্ভার স্লো হয়ে পড়বে।
+            </p>
+            <p>
+                <strong>আধুনিক স্ট্যান্ডার্ড:</strong> <code>fs.createReadStream(filePath).pipe(res)</code> ব্যবহার করা। এতে ফাইল ডিস্ক থেকে পড়ার সাথে সাথে নেটওয়ার্ক সকেটে পাইপ দিয়ে পাঠিয়ে দেওয়া হয়—মেমোরি খরচ শূন্যের কোটায় নেমে আসে!
+            </p>
+        </section>
+
+        <!-- Section 5: Hands-On Action Banner -->
+        <div class="action-banner">
+            <div class="action-text">
+                <h3>টপিক ০৬ ল্যাব প্রজেক্ট দেখতে প্রস্তুত?</h3>
+                <p>ল্যাব ফোল্ডারে গিয়ে HTML, CSS এবং JS সার্ভ করার কমপ্লিট কোডটি টেস্ট করুন।</p>
+            </div>
+            <a href="Project/index.html" class="btn-lab">টপিক ০৬ ল্যাব খুলুন →</a>
+        </div>
+    </div>
+</body>
+</html>
