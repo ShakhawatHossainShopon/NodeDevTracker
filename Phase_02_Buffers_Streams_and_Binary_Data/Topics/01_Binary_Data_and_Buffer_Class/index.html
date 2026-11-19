@@ -308,7 +308,49 @@
             background: #1d4ed8;
             transform: translateY(-1px);
         }
-    </style>
+    
+/* Copy Button Styling */
+.code-header, .term-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 5;
+    line-height: 1.2;
+}
+.copy-btn:hover, .copy-btn:active {
+    background: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.45);
+}
+.copy-btn.copied {
+    background: #10b981 !important;
+    border-color: #059669 !important;
+    color: #ffffff !important;
+}
+.copy-btn-floating {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+}
+
+</style>
 </head>
 <body>
     <div class="container">
@@ -530,5 +572,128 @@ server.listen(3000);</code></pre>
             </div>
         </section>
     </div>
+
+<script>
+function copyTextToClipboard(text, btn) {
+    function showSuccess() {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(showSuccess).catch(() => {
+            fallbackCopy(text);
+        });
+    } else {
+        fallbackCopy(text);
+    }
+
+    function fallbackCopy(str) {
+        const ta = document.createElement('textarea');
+        ta.value = str;
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            document.execCommand('copy');
+            showSuccess();
+        } catch (e) {
+            console.error('Copy failed:', e);
+        }
+        document.body.removeChild(ta);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Code Containers
+    document.querySelectorAll('.code-container').forEach(container => {
+        if (container.querySelector('.copy-btn')) return;
+        const header = container.querySelector('.code-header');
+        const pre = container.querySelector('pre');
+        if (!pre) return;
+
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.setAttribute('type', 'button');
+        btn.innerHTML = '📋 Copy Code';
+        btn.onclick = () => copyTextToClipboard(pre.innerText.trim(), btn);
+
+        if (header) {
+            header.style.display = 'flex';
+            header.style.justifyContent = 'space-between';
+            header.style.alignItems = 'center';
+            header.appendChild(btn);
+        } else {
+            container.style.position = 'relative';
+            btn.classList.add('copy-btn-floating');
+            container.appendChild(btn);
+        }
+    });
+
+    // 2. Terminal Boxes
+    document.querySelectorAll('.terminal-box').forEach(box => {
+        if (box.querySelector('.copy-btn')) return;
+        box.style.position = 'relative';
+
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.setAttribute('type', 'button');
+        btn.innerHTML = '📋 Copy Output';
+        
+        btn.onclick = () => {
+            const preOrCode = box.querySelector('pre') || box.querySelector('code');
+            const clone = (preOrCode || box).cloneNode(true);
+            const internalTitle = clone.querySelector('.term-title');
+            if (internalTitle) internalTitle.remove();
+            const internalBtn = clone.querySelector('.copy-btn');
+            if (internalBtn) internalBtn.remove();
+            copyTextToClipboard(clone.innerText.trim(), btn);
+        };
+
+        const title = box.querySelector('.term-title');
+        if (title) {
+            const header = document.createElement('div');
+            header.className = 'term-header';
+            header.style.display = 'flex';
+            header.style.justifyContent = 'space-between';
+            header.style.alignItems = 'center';
+            header.style.marginBottom = '0.35rem';
+            title.parentNode.insertBefore(header, title);
+            header.appendChild(title);
+            header.appendChild(btn);
+        } else {
+            btn.classList.add('copy-btn-floating');
+            box.appendChild(btn);
+        }
+    });
+
+    // 3. Standalone <pre> elements
+    document.querySelectorAll('pre').forEach(pre => {
+        if (pre.closest('.code-container') || pre.closest('.terminal-box') || (pre.parentElement && pre.parentElement.querySelector('.copy-btn'))) return;
+        
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'relative';
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn copy-btn-floating';
+        btn.setAttribute('type', 'button');
+        btn.innerHTML = '📋 Copy';
+        btn.onclick = () => copyTextToClipboard(pre.innerText.trim(), btn);
+        wrapper.appendChild(btn);
+    });
+});
+</script>
+
 </body>
 </html>

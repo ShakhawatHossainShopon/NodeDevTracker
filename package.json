@@ -1,0 +1,11 @@
+{
+  "name": "nodejs-tracker",
+  "version": "1.0.0",
+  "description": "Node.js Web Backend Engineering Curriculum Tracker with MongoDB Atlas Sync",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "mongodb": "^7.9.0"
+  }
+}

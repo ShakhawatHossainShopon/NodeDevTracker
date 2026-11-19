@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০১: Express.js আর্কিটেকচার ও ফিলোসফি (Why Express over Native HTTP)</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #0284c7;
+            --accent-light: #f0f9ff;
+            --accent-border: #bae6fd;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --info-bg: #f0fdf4;
+            --info-border: #bbf7d0;
+            --info-text: #15803d;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 940px; margin: 0 auto; }
+        .nav-back {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            color: var(--accent); text-decoration: none; font-weight: 600;
+            font-size: 0.95rem; margin-bottom: 2rem; padding: 0.5rem 1rem;
+            background: var(--surface); border-radius: 8px; border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); transition: all 0.2s;
+        }
+        .nav-back:hover { background: var(--surface-subtle); border-color: var(--border-subtle); }
+        header {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2.25rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .badge-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .badge {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; padding: 0.25rem 0.65rem; border-radius: 6px;
+        }
+        .badge-phase { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
+        .badge-topic { background-color: var(--tag-bg); color: var(--tag-text); }
+        h1 { color: var(--text-main); font-size: 2rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.75rem; }
+        .subtitle { font-size: 1.1rem; color: var(--text-muted); font-weight: 400; line-height: 1.6; }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        h2 {
+            color: var(--text-main); font-size: 1.45rem; font-weight: 700;
+            margin-bottom: 1.25rem; padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle); display: flex; align-items: center; gap: 0.5rem;
+        }
+        p { margin-bottom: 1.2rem; font-size: 1.02rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1.25rem; }
+        li { margin-bottom: 0.5rem; }
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg); border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #dc2626;
+        }
+        pre {
+            background-color: var(--code-bg); color: var(--code-text);
+            padding: 1.25rem; border-radius: 8px; overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem; border: 1px solid #1e293b;
+        }
+        pre code { background-color: transparent; border: none; padding: 0; color: inherit; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { border: 1px solid var(--border); padding: 0.75rem 1rem; text-align: left; }
+        th { background-color: var(--surface-subtle); color: var(--text-main); font-weight: 600; }
+        tr:nth-child(even) { background-color: #fafbfc; }
+        .cta-container {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--accent-light); border: 1px solid var(--accent-border);
+            border-radius: 12px; padding: 1.75rem; margin-top: 2rem; flex-wrap: wrap; gap: 1rem;
+        }
+        .btn-action {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--accent); color: #ffffff; font-weight: 600;
+            padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none;
+            transition: all 0.2s; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+        }
+        .btn-action:hover { background: #0369a1; transform: translateY(-1px); }
+
+        .copy-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.12); color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 4px;
+            padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; user-select: none; z-index: 5;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.28); color: #ffffff; }
+        .copy-btn.copied { background: #10b981 !important; border-color: #059669 !important; }
+        .copy-btn-floating { position: absolute; top: 6px; right: 8px; }
+
+        @media (max-width: 768px) {
+            body { padding: 0.75rem 0.5rem; font-size: 14px; }
+            .container { max-width: 100%; width: 100%; }
+            header { padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 0.85rem; }
+            header h1 { font-size: 1.3rem; }
+            .card { padding: 1rem 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="nav-back">← মাস্টার ট্র্যাকারে ফিরে যান</a>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">Phase 03: Express.js Core</span>
+                <span class="badge badge-topic">Topic 01</span>
+                <span class="badge" style="background: #e0f2fe; color: #0369a1;">পাঠের সময়: ১৫ মিনিট</span>
+            </div>
+            <h1>Express.js আর্কিটেকচার ও ফিলোসফি (Why Express over Native HTTP)</h1>
+            <p class="subtitle">নেটিভ HTTP এর জটিল বয়লারপ্লেট দূর করে মিনিমালিস্ট ও ফ্লেক্সিবল ওয়েব ফ্রেমওয়ার্কের ভিত্তি।</p>
+        </header>
+
+        <section class="card">
+            <h2>১. কেন নেটিভ HTTP-র বদলে Express.js?</h2>
+            <p>ফেজ ০১-এ আমরা দেখেছি কীভাবে খাঁটি <code>node:http</code> দিয়ে সার্ভার তৈরি করতে হয়। কিন্তু বাস্তব প্রোডাক্ট অ্যাপ্লিকেশনে নেটিভ HTTP ব্যবহারের কিছু বড় সীমাবদ্ধতা রয়েছে:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ফিচার</th>
+                        <th>নেটিভ Node.js HTTP</th>
+                        <th>Express.js ফ্রেমওয়ার্ক</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>রাউটিং</strong></td>
+                        <td>ম্যানুয়াল <code>if (req.url === ... && req.method === ...)</code> চেক করতে হয়।</td>
+                        <td>ক্লিন ও রিডেবল মেথড: <code>app.get()</code>, <code>app.post()</code>।</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ডায়নামিক প্যারামিটার</strong></td>
+                        <td>রেগুলার এক্সপ্রেশন (Regex) দিয়ে ম্যানুয়ালি পার্স করতে হয়।</td>
+                        <td>স্বয়ংক্রিয় পার্সিং: <code>/users/:id</code> -> <code>req.params.id</code>।</td>
+                    </tr>
+                    <tr>
+                        <td><strong>মিডলওয়্যার পাইপলাইন</strong></td>
+                        <td>ম্যানুয়ালি চেইনিং ফাংশন তৈরি করতে হয়।</td>
+                        <td>স্ট্যান্ডার্ড <code>app.use((req, res, next) => {})</code> আর্কিটেকচার।</td>
+                    </tr>
+                    <tr>
+                        <td><strong>রেসপন্স হেল্পার</strong></td>
+                        <td>ম্যানুয়ালি হেডার ও <code>res.end(JSON.stringify(data))</code> লিখতে হয়।</td>
+                        <td>ওয়ান-লাইনার হেল্পার: <code>res.json(data)</code>, <code>res.status(201)</code>।</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>২. Express.js এর আন্ডার-দ্য-হুড আর্কিটেকচার</h2>
+            <p>Express কিন্তু Node.js নেটিভ HTTP ইঞ্জিনকে প্রতিস্থাপন করে না! বরং Express একটি পাতলা র‍্যাপার (Thin Wrapper) যা প্রতিটি <code>req</code> এবং <code>res</code> অবজেক্টে শক্তিশালী হেল্পার প্রোপার্টি ও মেথড প্রোটোটাইপ ইনজেক্ট করে।</p>
+            <pre><code>import express from 'express';
+
+const app = express();
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', framework: 'Express.js v5' });
+});
+
+app.listen(3000, () => {
+  console.log('Express app listening on http://localhost:3000');
+});</code></pre>
+        </section>
+
+        <section class="card">
+            <h2>৩. সারাংশ ও গুরুত্বপূর্ণ টেকওয়ে</h2>
+            <div class="cta-container">
+                <div>
+                    <h3 style="margin: 0; color: var(--accent);">ল্যাব করতে প্রস্তুত?</h3>
+                    <p style="margin: 0; font-size: 0.95rem;">টপিক ০১ এর প্রজেক্ট ল্যাব ওয়াকথ্রু দেখুন।</p>
+                </div>
+                <a href="Project/index.html" class="btn-action">প্রজেক্ট ল্যাব শুরু করুন →</a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    function copyTextToClipboard(text, btn) {
+        function showSuccess() {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '✅ Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showSuccess).catch(() => fallbackCopy(text));
+        } else { fallbackCopy(text); }
+        function fallbackCopy(str) {
+            const ta = document.createElement('textarea');
+            ta.value = str;
+            ta.style.position = 'fixed';
+            ta.style.top = '0';
+            ta.style.left = '0';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); showSuccess(); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre').forEach(pre => {
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            pre.parentNode.insertBefore(wrapper, pre);
+            wrapper.appendChild(pre);
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn copy-btn-floating';
+            btn.setAttribute('type', 'button');
+            btn.innerHTML = '📋 Copy Code';
+            btn.onclick = () => copyTextToClipboard(pre.innerText.trim(), btn);
+            wrapper.appendChild(btn);
+        });
+    });
+    </script>
+</body>
+</html>

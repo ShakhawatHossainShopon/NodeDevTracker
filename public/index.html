@@ -1,0 +1,3178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Node.js, Express &amp; Database Web Engineering Syllabus</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #0f172a;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --project-node: #f0fdf4;
+            --project-node-border: #22c55e;
+            --project-node-text: #166534;
+            --warning-bg: #fef2f2;
+            --warning-border: #fecaca;
+            --warning-text: #991b1b;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-body);
+            line-height: 1.65;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+        
+        /* Sticky Tracker Bar (Light Mode) */
+        .sticky-tracker-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            color: #0f172a;
+            padding: 0.85rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .tracker-stats {
+            display: flex;
+            gap: 1.25rem;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        .stat-badge {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .stat-badge span {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .progress-outer {
+            flex: 1;
+            min-width: 200px;
+            max-width: 320px;
+            background: #e2e8f0;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #16a34a, #059669);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .tracker-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .tracker-btn {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tracker-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        
+        header {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2.25rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .meta-box {
+            font-size: 0.98rem;
+            color: var(--text-body);
+            margin-top: 0.5rem;
+        }
+        .meta-box strong {
+            color: var(--primary);
+        }
+        
+        .phase-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        .phase-title {
+            background-color: #f8fafc;
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            letter-spacing: -0.01em;
+        }
+        .topics-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .topic-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+            gap: 1rem;
+            transition: background 0.15s ease;
+        }
+        .topic-item:hover {
+            background-color: #f8fafc;
+        }
+        .topic-name {
+            flex: 1;
+            color: var(--text-body);
+        }
+        .topic-name strong {
+            color: var(--primary);
+            margin-right: 0.25rem;
+        }
+        .topic-link-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: 1px solid var(--accent-border);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 0.6rem;
+            transition: all 0.2s;
+        }
+        .topic-link-badge:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+        
+        /* 3-State Radio Checkers */
+        .radio-checker-group {
+            display: inline-flex;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2px;
+            gap: 2px;
+            user-select: none;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: var(--text-muted);
+        }
+        .radio-label input[type="radio"] {
+            display: none;
+        }
+        .radio-label:hover {
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text-body);
+        }
+        
+        .radio-pending input:checked + span {
+            color: #475569;
+            font-weight: 700;
+        }
+        .radio-pending:has(input:checked) {
+            background: #e2e8f0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .radio-working input:checked + span {
+            color: #b45309;
+            font-weight: 700;
+        }
+        .radio-working:has(input:checked) {
+            background: #fef3c7;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .radio-done input:checked + span {
+            color: #15803d;
+            font-weight: 700;
+        }
+        .radio-done:has(input:checked) {
+            background: #dcfce7;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .topic-item.status-done {
+            background-color: #fcfdfc;
+        }
+        .topic-item.status-done .topic-name {
+            color: #64748b;
+        }
+        .topic-item.status-working {
+            background-color: #fffefb;
+            border-left: 3px solid #f59e0b;
+        }
+        
+        /* Capstone Project Row */
+        .project-row {
+            background-color: var(--project-node);
+            border-top: 1px solid var(--project-node-border);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+        .project-info {
+            flex: 1;
+        }
+        .project-tag {
+            display: inline-block;
+            background: #dcfce7;
+            color: var(--project-node-text);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.35rem;
+            border: 1px solid #86efac;
+        }
+        .project-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--project-node-text);
+            margin-bottom: 0.25rem;
+        }
+        .project-desc {
+            font-size: 0.88rem;
+            color: #334155;
+            line-height: 1.45;
+        }
+
+        /* Mobile-First Responsive Design */
+        @media (max-width: 768px) {
+            body { padding: 0.75rem 0.5rem; font-size: 14px; line-height: 1.5; }
+            .container { max-width: 100%; width: 100%; }
+            .sticky-tracker-bar {
+                padding: 0.6rem 0.75rem; border-radius: 8px; margin-bottom: 0.85rem;
+                flex-direction: column; align-items: stretch; gap: 0.45rem;
+            }
+            .tracker-stats {
+                width: 100%; display: flex; justify-content: space-between; gap: 0.35rem; font-size: 0.76rem;
+            }
+            .stat-badge { padding: 0.2rem 0.45rem; font-size: 0.74rem; border-radius: 5px; flex: 1; text-align: center; }
+            .progress-outer { width: 100%; max-width: 100%; min-width: 100%; height: 8px; border-radius: 4px; margin: 0; }
+            .tracker-actions { width: 100%; display: flex; justify-content: space-between; gap: 0.5rem; }
+            .tracker-btn { flex: 1; padding: 0.3rem 0.5rem; font-size: 0.74rem; text-align: center; }
+            header { padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 0.85rem; border-left-width: 4px; }
+            header h1 { font-size: 1.25rem; line-height: 1.35; margin-bottom: 0.4rem; }
+            #cloud-sync-status { font-size: 0.72rem !important; padding: 0.2rem 0.6rem !important; }
+            .phase-card, .section-card { padding: 0.85rem 0.75rem; border-radius: 8px; margin-bottom: 0.85rem; }
+            .phase-title, .section-card h2 { font-size: 1.12rem; padding-bottom: 0.4rem; margin-bottom: 0.75rem; }
+            .topic-item {
+                flex-direction: column; align-items: stretch; padding: 0.6rem 0.65rem;
+                margin-bottom: 0.45rem; gap: 0.45rem; border-radius: 6px;
+            }
+            .topic-name {
+                margin-right: 0; font-size: 0.86rem; line-height: 1.45;
+                display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.35rem;
+            }
+            .topic-link-badge { margin-left: auto; font-size: 0.7rem; padding: 0.15rem 0.45rem; }
+            .radio-checker-group {
+                width: 100%; display: flex; justify-content: space-between;
+                padding: 2px; border-radius: 6px; background: #e2e8f0;
+            }
+            .radio-label { flex: 1; display: flex; justify-content: center; text-align: center; }
+            .radio-label span { width: 100%; text-align: center; padding: 5px 2px; font-size: 0.72rem; border-radius: 5px; display: block; }
+            .project-row { flex-direction: column; align-items: stretch; padding: 0.75rem 0.75rem; gap: 0.5rem; border-left-width: 4px; }
+            .project-info { font-size: 0.86rem; line-height: 1.45; }
+            .project-row .radio-checker-group { width: 100%; }
+            table { display: block; overflow-x: auto; white-space: nowrap; font-size: 0.78rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sticky-tracker-bar">
+        <div class="tracker-stats">
+            <div class="stat-badge">Topics: <span id="topics-count">0</span> / <span id="topics-total">126</span></div>
+            <div class="stat-badge">Projects: <span id="projects-count">0</span> / <span id="projects-total">21</span></div>
+            <div class="stat-badge">Completion: <span id="total-pct">0%</span></div>
+        </div>
+        <div class="progress-outer">
+            <div class="progress-inner" id="progress-bar"></div>
+        </div>
+        <div class="tracker-actions">
+            <button class="tracker-btn" onclick="resetTracker()">Reset All</button>
+            <button class="tracker-btn" onclick="exportTracker()">Save Backup</button>
+        </div>
+    </div>
+
+    <header>
+        <h1>Complete Node.js, Express &amp; Database Web Engineering Syllabus</h1>
+        <div class="sync-container" style="margin-top: 0.65rem;">
+            <span id="cloud-sync-status" style="display:inline-flex; align-items:center; gap:0.35rem; font-size:0.8rem; font-weight:700; padding:0.25rem 0.75rem; border-radius:20px; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;">
+                🟢 Cloud Synced (MongoDB Atlas)
+            </span>
+        </div>
+        <div class="meta-box">
+            <strong>Goal:</strong> Master production-grade web backend engineering: Node.js, Streams &amp; Buffers, Express.js, MVC Architecture, MongoDB &amp; Mongoose, Embedded SQLite, Relational SQL &amp; PostgreSQL, Sequelize ORM, Prisma ORM, Authentication (JWT), REST APIs, WebSockets, Redis, and Cloud Deployment.
+        </div>
+        <div class="meta-box">
+            <strong>Approach:</strong> 100% Practical Project-Based Learning — 21 Phases, 21 Production-Ready Capstone Projects.
+        </div>
+    </header>
+
+    <div class="phase-card">
+        <div class="phase-title">PHASE 01 — Node.js Web Fundamentals & Native HTTP</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p01_t01">
+                <span class="topic-name"><strong>01.</strong> The Modern Node.js Web Landscape & Runtime Overview <a href="Phase_01_NodeJS_Web_Fundamentals_and_HTTP/Topics/01_Web_Landscape_and_Node_HTTP_Architecture/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p01_t01" value="pending" />
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p01_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p01_t01" value="done" checked/>
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p01_t02">
+                <span class="topic-name"><strong>02.</strong> Node Modules System: CommonJS vs ES Modules for Web Backends <a href="Phase_01_NodeJS_Web_Fundamentals_and_HTTP/Topics/02_Node_Modules_CommonJS_vs_ESM/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p01_t02" value="pending" />
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p01_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p01_t02" value="done" checked/>
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p01_t03">
+                <span class="topic-name"><strong>03.</strong> Native HTTP Server (`node:http`) & Request/Response Life Cycle <a href="Phase_01_NodeJS_Web_Fundamentals_and_HTTP/Topics/03_Native_HTTP_Server_and_Life_Cycle/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p01_t03" value="pending" />
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p01_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p01_t03" value="done" checked/>
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p01_t04">
+                <span class="topic-name"><strong>04.</strong> Parsing URL Paths, Query Strings & HTTP Request Headers <a href="Phase_01_NodeJS_Web_Fundamentals_and_HTTP/Topics/04_Parsing_URL_Query_and_Headers/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p01_t04" value="pending" />
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p01_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p01_t04" value="done" checked/>
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p01_t05">
+                <span class="topic-name"><strong>05.</strong> Processing HTTP POST/PUT Bodies & Streaming JSON Payloads <a href="Phase_01_NodeJS_Web_Fundamentals_and_HTTP/Topics/05_Processing_HTTP_POST_Bodies_and_Streaming_JSON/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p01_t05" value="pending" />
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p01_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p01_t05" value="done" checked/>
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p01_t06">
+                <span class="topic-name"><strong>06.</strong> Serving Static Files (HTML, CSS, Images) with `node:fs` <a href="Phase_01_NodeJS_Web_Fundamentals_and_HTTP/Topics/06_Serving_Static_Files_with_Node_FS/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p01_t06" value="pending" />
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p01_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p01_t06" value="done" checked/>
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p01_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 01 Capstone Project</span>
+                <div class="project-title">Native HTTP Micro-Server & Web Router <a href="Phase_01_NodeJS_Web_Fundamentals_and_HTTP/Projects/Project_Native_HTTP_Router_and_Microserver/index.html" class="topic-link-badge">🚀 Project Guide</a></div>
+                <div class="project-desc">Build a zero-dependency web server with dynamic parameter routing, query parsing, JSON body streaming, and static asset delivery using pure native Node.js.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p01_proj" value="pending" />
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p01_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p01_proj" value="done" checked/>
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 02 — Buffers, Streams & Binary Data in Web Applications</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p02_t01">
+                <span class="topic-name"><strong>01.</strong> Binary Data in Web Backends & The Node.js `Buffer` Class <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/01_Binary_Data_and_Buffer_Class/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p02_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p02_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p02_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p02_t02">
+                <span class="topic-name"><strong>02.</strong> Node Streams Architecture: Readable, Writable, Duplex & Transform <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/02_Node_Streams_Architecture/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p02_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p02_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p02_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p02_t03">
+                <span class="topic-name"><strong>03.</strong> Stream Backpressure & Event Lifecycle (`data`, `end`, `drain`, `error`) <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/03_Stream_Backpressure_and_Lifecycle/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p02_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p02_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p02_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p02_t04">
+                <span class="topic-name"><strong>04.</strong> Safe Stream Composition with `stream.promises.pipeline()` <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/04_Safe_Stream_Composition_Pipeline/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p02_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p02_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p02_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p02_t05">
+                <span class="topic-name"><strong>05.</strong> Handling Chunked HTTP Request & Response Streams (`req` & `res`) <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/05_Chunked_HTTP_Request_Response_Streams/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p02_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p02_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p02_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p02_t06">
+                <span class="topic-name"><strong>06.</strong> High-Performance CSV/JSON Data Streaming & Memory Optimization <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/06_High_Performance_Data_Streaming_Optimization/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p02_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p02_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p02_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p02_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 02 Capstone Project</span>
+                <div class="project-title">High-Performance Streaming Log & Data Export Engine <a href="Phase_02_Buffers_Streams_and_Binary_Data/Projects/Project_Streaming_Data_Export_Engine/index.html" class="topic-link-badge">🚀 Project Guide</a></div>
+                <div class="project-desc">Architect a memory-efficient streaming pipeline that transforms and exports multi-megabyte datasets via HTTP with backpressure handling.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p02_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p02_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p02_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 03 — Express.js Framework Fundamentals</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p03_t01">
+                <span class="topic-name"><strong>01.</strong> Express.js Architecture & Philosophy (Why Express over Native HTTP) <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/01_Express_Architecture_and_Philosophy/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p03_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p03_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p03_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p03_t02">
+                <span class="topic-name"><strong>02.</strong> Application Setup, Environment Variables & Configuration with `dotenv` <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/02_App_Setup_Env_Vars_and_Dotenv/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p03_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p03_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p03_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p03_t03">
+                <span class="topic-name"><strong>03.</strong> Route Handlers: HTTP Verbs, Route Patterns & Wildcards <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/03_Route_Handlers_HTTP_Verbs_Patterns/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p03_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p03_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p03_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p03_t04">
+                <span class="topic-name"><strong>04.</strong> Handling Dynamic Route Parameters (`req.params`) & Query Strings (`req.query`) <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/04_Dynamic_Params_and_Query_Strings/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p03_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p03_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p03_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p03_t05">
+                <span class="topic-name"><strong>05.</strong> Express Response Methods (`res.json()`, `res.send()`, `res.status()`, `res.sendFile()`) <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/05_Express_Response_Methods/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p03_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p03_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p03_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p03_t06">
+                <span class="topic-name"><strong>06.</strong> Modular Route Organization using `express.Router()` <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/06_Modular_Routes_with_Express_Router/index.html" class="topic-link-badge">📖 Study Guide</a></span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p03_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p03_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p03_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p03_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 03 Capstone Project</span>
+                <div class="project-title">Modular RESTful Product Catalog Service <a href="Phase_03_ExpressJS_Core_and_Routing/Projects/Project_Modular_Product_Catalog_Service/index.html" class="topic-link-badge">🚀 Project Guide</a></div>
+                <div class="project-desc">Implement a structured multi-resource catalog service with modular Express routers, nested resources, and parameter validators.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p03_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p03_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p03_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 04 — Middleware Engineering & Request Pipeline</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p04_t01">
+                <span class="topic-name"><strong>01.</strong> The Express Middleware Pipeline: Chain of Responsibility & `next()`</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p04_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p04_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p04_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p04_t02">
+                <span class="topic-name"><strong>02.</strong> Application-Level vs Router-Level Middleware Execution</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p04_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p04_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p04_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p04_t03">
+                <span class="topic-name"><strong>03.</strong> Built-in Middleware (`express.json()`, `express.urlencoded()`, `express.static()`)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p04_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p04_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p04_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p04_t04">
+                <span class="topic-name"><strong>04.</strong> Essential Third-Party Middleware: Morgan, CORS, Cookie-Parser</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p04_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p04_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p04_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p04_t05">
+                <span class="topic-name"><strong>05.</strong> Building Custom Request Processing, Context Attachment & Timing Middleware</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p04_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p04_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p04_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p04_t06">
+                <span class="topic-name"><strong>06.</strong> Error-Handling Middleware (4-Argument Signature) & Error Propagation</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p04_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p04_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p04_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p04_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 04 Capstone Project</span>
+                <div class="project-title">Configurable API Gateway Middleware Suite</div>
+                <div class="project-desc">Develop an end-to-end middleware chain featuring request correlation IDs, latency measurement, CORS whitelist filtering, and payload size enforcement.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p04_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p04_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p04_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 05 — MVC (Model-View-Controller) Architecture & SSR</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p05_t01">
+                <span class="topic-name"><strong>01.</strong> MVC Architectural Pattern: Decoupling Data, Presentation & Control</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p05_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p05_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p05_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p05_t02">
+                <span class="topic-name"><strong>02.</strong> Clean Project Layout: Controllers, Models, Views, Routes & Services</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p05_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p05_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p05_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p05_t03">
+                <span class="topic-name"><strong>03.</strong> Designing Clean Controllers (Single Responsibility & Clean Signatures)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p05_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p05_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p05_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p05_t04">
+                <span class="topic-name"><strong>04.</strong> Service Layer Pattern: Separating Business Rules from HTTP Transport</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p05_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p05_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p05_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p05_t05">
+                <span class="topic-name"><strong>05.</strong> Server-Side Rendering (SSR) with EJS Template Engine</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p05_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p05_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p05_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p05_t06">
+                <span class="topic-name"><strong>06.</strong> Template Partials, Layouts, Helper Functions & Form Submissions</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p05_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p05_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p05_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p05_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 05 Capstone Project</span>
+                <div class="project-title">Full-Stack MVC Blog & Content Management Engine</div>
+                <div class="project-desc">Build a production-structured MVC application with separated controllers, services, memory data store, and SSR view layouts with dynamic form submissions.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p05_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p05_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p05_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 06 — REST API Design & Standardized Response Systems</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p06_t01">
+                <span class="topic-name"><strong>01.</strong> REST Constraints: Statelessness, Resource Identification & Uniform Interface</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p06_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p06_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p06_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p06_t02">
+                <span class="topic-name"><strong>02.</strong> HTTP Status Codes Taxonomy (200, 201, 204, 400, 401, 403, 404, 409, 422, 500)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p06_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p06_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p06_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p06_t03">
+                <span class="topic-name"><strong>03.</strong> Standard JSON API Response Formatting (JSend / Envelope Specification)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p06_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p06_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p06_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p06_t04">
+                <span class="topic-name"><strong>04.</strong> Filtering, Sorting & Field Selection Query Design</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p06_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p06_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p06_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p06_t05">
+                <span class="topic-name"><strong>05.</strong> Pagination Architectures: Offset/Limit vs Cursor-Based Pagination</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p06_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p06_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p06_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p06_t06">
+                <span class="topic-name"><strong>06.</strong> API Versioning Strategies (URI Path vs Header vs Content Negotiation)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p06_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p06_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p06_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p06_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 06 Capstone Project</span>
+                <div class="project-title">Enterprise RESTful E-Commerce Resource API</div>
+                <div class="project-desc">Architect a resource-oriented REST API featuring standardized JSend envelopes, query filtering, multi-field sorting, and robust cursor pagination.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p06_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p06_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p06_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 07 — Request Validation & Data Sanitization</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p07_t01">
+                <span class="topic-name"><strong>01.</strong> Validation Principles: Defensive Programming & Reject-Early Architecture</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p07_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p07_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p07_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p07_t02">
+                <span class="topic-name"><strong>02.</strong> Schema Validation with Zod (Typesafe Parsing & Inference)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p07_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p07_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p07_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p07_t03">
+                <span class="topic-name"><strong>03.</strong> Route Validation with Joi & Express Middleware Integration</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p07_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p07_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p07_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p07_t04">
+                <span class="topic-name"><strong>04.</strong> Using `express-validator`: Chains, Sanitations & Custom Formatters</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p07_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p07_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p07_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p07_t05">
+                <span class="topic-name"><strong>05.</strong> Building Reusable Schema Validation Middleware for Body, Query & Params</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p07_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p07_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p07_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p07_t06">
+                <span class="topic-name"><strong>06.</strong> Sanitizing Inputs: Trimming, Escaping, and NoSQL/XSS Injection Defense</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p07_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p07_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p07_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p07_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 07 Capstone Project</span>
+                <div class="project-title">Typesafe Form & API Payload Validator Engine</div>
+                <div class="project-desc">Implement a unified validation subsystem using Zod that intercepts invalid requests, returns structured field-level errors, and sanitizes payload strings.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p07_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p07_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p07_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 08 — Centralized Error Handling & Production Logging</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p08_t01">
+                <span class="topic-name"><strong>01.</strong> Error Classes & Operational vs Programmer Errors</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p08_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p08_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p08_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p08_t02">
+                <span class="topic-name"><strong>02.</strong> Catching Async Errors: `asyncHandler` Wrapper vs Native Promises</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p08_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p08_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p08_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p08_t03">
+                <span class="topic-name"><strong>03.</strong> Building a Custom `AppError` Hierarchy with HTTP Status Codes</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p08_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p08_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p08_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p08_t04">
+                <span class="topic-name"><strong>04.</strong> Global Centralized Error Handling Middleware & Stack Trace Masking</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p08_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p08_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p08_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p08_t05">
+                <span class="topic-name"><strong>05.</strong> Production Logging with Winston (Log Levels, JSON Formats, Transports)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p08_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p08_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p08_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p08_t06">
+                <span class="topic-name"><strong>06.</strong> HTTP Access Logging with Morgan & Correlating Logs with Request IDs</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p08_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p08_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p08_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p08_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 08 Capstone Project</span>
+                <div class="project-title">Resilient Error Monitoring & Structured Logger Service</div>
+                <div class="project-desc">Construct an enterprise-grade error pipeline featuring structured Winston logging, unhandled rejection catchers, and secure client-facing error envelopes.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p08_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p08_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p08_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 09 — MongoDB & Mongoose ODM Fundamentals</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p09_t01">
+                <span class="topic-name"><strong>01.</strong> NoSQL Architecture: Collections, BSON Documents vs Relational Tables</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p09_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p09_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p09_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p09_t02">
+                <span class="topic-name"><strong>02.</strong> Connecting Node.js to MongoDB Atlas / Local via Mongoose</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p09_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p09_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p09_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p09_t03">
+                <span class="topic-name"><strong>03.</strong> Mongoose Schemas, Field Types, Default Values & Options</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p09_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p09_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p09_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p09_t04">
+                <span class="topic-name"><strong>04.</strong> Mongoose Models & CRUD Queries (Create, Find, Update, Delete)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p09_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p09_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p09_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p09_t05">
+                <span class="topic-name"><strong>05.</strong> Mongoose Built-in & Custom Schema Validations</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p09_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p09_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p09_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p09_t06">
+                <span class="topic-name"><strong>06.</strong> Virtual Properties, Timestamps & JSON Transformation</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p09_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p09_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p09_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p09_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 09 Capstone Project</span>
+                <div class="project-title">Task & Project Management API with MongoDB & Mongoose</div>
+                <div class="project-desc">Build a complete CRUD backend with Mongoose ODM featuring schema constraints, custom validators, virtual getters, and soft deletion.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p09_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p09_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p09_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 10 — Advanced Mongoose, Data Relationships & Aggregation</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p10_t01">
+                <span class="topic-name"><strong>01.</strong> Data Modeling Strategies: Referencing vs Embedding (Normalized vs Denormalized)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p10_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p10_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p10_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p10_t02">
+                <span class="topic-name"><strong>02.</strong> Query Population (`populate()`) & Multi-Level Nested Population</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p10_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p10_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p10_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p10_t03">
+                <span class="topic-name"><strong>03.</strong> Mongoose Middleware (Pre/Post Document & Query Hooks)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p10_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p10_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p10_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p10_t04">
+                <span class="topic-name"><strong>04.</strong> Database Indexing: Single, Compound, Unique, Text & Performance Profiling</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p10_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p10_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p10_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p10_t05">
+                <span class="topic-name"><strong>05.</strong> MongoDB Aggregation Pipeline: `$match`, `$group`, `$sort`, `$project`, `$unwind`</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p10_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p10_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p10_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p10_t06">
+                <span class="topic-name"><strong>06.</strong> Multi-Document ACID Transactions with Mongoose Client Sessions</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p10_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p10_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p10_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p10_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 10 Capstone Project</span>
+                <div class="project-title">Analytics & Order Aggregation Engine with Mongoose</div>
+                <div class="project-desc">Implement a complex e-commerce order system with referenced customer profiles, stock deduction transactions, and revenue reporting aggregations.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p10_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p10_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p10_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 11 — Embedded SQL Databases with SQLite (better-sqlite3 & node:sqlite)</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p11_t01">
+                <span class="topic-name"><strong>01.</strong> SQLite Architecture: Serverless, Single-File (.db), In-Memory (:memory:) & Zero-Config Philosophy</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p11_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p11_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p11_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p11_t02">
+                <span class="topic-name"><strong>02.</strong> High-Performance SQLite with `better-sqlite3`: Prepared Statements & Synchronous Execution</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p11_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p11_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p11_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p11_t03">
+                <span class="topic-name"><strong>03.</strong> Modern Built-in `node:sqlite` Module in Node.js (v22+ Native SQLite API)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p11_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p11_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p11_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p11_t04">
+                <span class="topic-name"><strong>04.</strong> SQLite Data Types, Dynamic Storage Classes, Constraints & Type Affinity</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p11_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p11_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p11_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p11_t05">
+                <span class="topic-name"><strong>05.</strong> Foreign Key Constraints (`PRAGMA foreign_keys = ON`), Indexes & ACID Transactions</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p11_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p11_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p11_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p11_t06">
+                <span class="topic-name"><strong>06.</strong> Edge & Serverless SQLite: Distributed Architectures (Turso/libSQL, Cloudflare D1, Litestream)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p11_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p11_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p11_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p11_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 11 Capstone Project</span>
+                <div class="project-title">High-Performance In-Memory & File-Based SQLite Analytics Ledger API</div>
+                <div class="project-desc">Build an ultra-fast, zero-network embedded analytical datastore using SQLite and `better-sqlite3`, featuring prepared statement caching, atomic multi-table transactions, and WAL mode optimization.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p11_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p11_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p11_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 12 — Relational Databases & SQL with PostgreSQL / MySQL</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p12_t01">
+                <span class="topic-name"><strong>01.</strong> Relational Concepts: ACID Properties, Normalization (1NF-3NF) & Schemas</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p12_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p12_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p12_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p12_t02">
+                <span class="topic-name"><strong>02.</strong> Connecting Node.js to PostgreSQL using `pg` (node-postgres) & Connection Pooling</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p12_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p12_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p12_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p12_t03">
+                <span class="topic-name"><strong>03.</strong> Writing DDL & DML: Tables, Primary Keys, Foreign Keys & Constraints</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p12_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p12_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p12_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p12_t04">
+                <span class="topic-name"><strong>04.</strong> Parameterized SQL Queries to Prevent SQL Injection Attacks</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p12_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p12_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p12_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p12_t05">
+                <span class="topic-name"><strong>05.</strong> Relational Relationships: One-to-One, One-to-Many & Many-to-Many Join Tables</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p12_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p12_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p12_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p12_t06">
+                <span class="topic-name"><strong>06.</strong> Executing Multi-Table JOINs (INNER, LEFT) and SQL Transactions (`BEGIN`, `COMMIT`, `ROLLBACK`)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p12_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p12_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p12_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p12_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 12 Capstone Project</span>
+                <div class="project-title">Raw SQL Financial Ledger & Account Transfer API</div>
+                <div class="project-desc">Build a rock-solid banking ledger using raw SQL queries with connection pooling, parameterized queries, and atomic multi-table transfer transactions.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p12_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p12_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p12_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 13 — SQL ORM with Sequelize</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p13_t01">
+                <span class="topic-name"><strong>01.</strong> ORM Concepts & Initializing Sequelize with PostgreSQL/MySQL/SQLite</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p13_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p13_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p13_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p13_t02">
+                <span class="topic-name"><strong>02.</strong> Defining Sequelize Models, Attributes, Data Types & Validations</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p13_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p13_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p13_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p13_t03">
+                <span class="topic-name"><strong>03.</strong> Sequelize Associations: `hasOne`, `belongsTo`, `hasMany`, `belongsToMany`</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p13_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p13_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p13_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p13_t04">
+                <span class="topic-name"><strong>04.</strong> Querying with Eager Loading (`include`), Filtering (`Op`), Ordering & Pagination</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p13_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p13_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p13_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p13_t05">
+                <span class="topic-name"><strong>05.</strong> Sequelize Hooks (Lifecycle Events) & Scopes</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p13_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p13_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p13_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p13_t06">
+                <span class="topic-name"><strong>06.</strong> Database Migrations, Seeders & CLI Tooling with Sequelize</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p13_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p13_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p13_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p13_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 13 Capstone Project</span>
+                <div class="project-title">Relational CRM & Contact Management System with Sequelize</div>
+                <div class="project-desc">Build an enterprise CRM service with Sequelize ORM featuring normalized customer-company relations, lifecycle hooks, and automated schema migrations.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p13_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p13_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p13_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 14 — Modern SQL ORM with Prisma</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p14_t01">
+                <span class="topic-name"><strong>01.</strong> The Next-Gen ORM: Why Prisma, Architecture & Workflow</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p14_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p14_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p14_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p14_t02">
+                <span class="topic-name"><strong>02.</strong> The Prisma Schema (`schema.prisma`): Models, Fields, Attributes & Enums</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p14_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p14_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p14_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p14_t03">
+                <span class="topic-name"><strong>03.</strong> Prisma Migrate: Generating SQL Migrations & Schema Synchronization</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p14_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p14_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p14_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p14_t04">
+                <span class="topic-name"><strong>04.</strong> Prisma Client CRUD: Type-Safe Queries (`findUnique`, `findMany`, `create`, `update`)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p14_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p14_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p14_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p14_t05">
+                <span class="topic-name"><strong>05.</strong> Relations in Prisma: Nested Writes, Fluent API & Cascade Deletions</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p14_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p14_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p14_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p14_t06">
+                <span class="topic-name"><strong>06.</strong> Filtering, Sorting, Pagination, Transactions & Prisma Client Extensions</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p14_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p14_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p14_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p14_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 14 Capstone Project</span>
+                <div class="project-title">SaaS Subscription & Billing Engine with Prisma ORM</div>
+                <div class="project-desc">Implement a typesafe multi-tier subscription engine with Prisma ORM, featuring nested plan writes, transactional ledgering, and relation queries.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p14_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p14_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p14_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 15 — Authentication, Password Security & JWT</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p15_t01">
+                <span class="topic-name"><strong>01.</strong> Web Authentication Paradigms: Stateful Sessions vs Stateless Tokens</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p15_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p15_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p15_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p15_t02">
+                <span class="topic-name"><strong>02.</strong> Cryptographic Password Hashing with `bcrypt` (Salt Rounds, Work Factor)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p15_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p15_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p15_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p15_t03">
+                <span class="topic-name"><strong>03.</strong> User Registration, Login Workflow & Password Comparison</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p15_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p15_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p15_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p15_t04">
+                <span class="topic-name"><strong>04.</strong> JSON Web Tokens (JWT): Header, Payload, Signature & Expiration</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p15_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p15_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p15_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p15_t05">
+                <span class="topic-name"><strong>05.</strong> Dual-Token Pattern: Short-Lived Access Tokens + Refresh Token Rotation</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p15_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p15_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p15_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p15_t06">
+                <span class="topic-name"><strong>06.</strong> Protecting Routes with Authentication Guard Middleware</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p15_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p15_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p15_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p15_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 15 Capstone Project</span>
+                <div class="project-title">Secure Token-Based Authentication & Refresh Service</div>
+                <div class="project-desc">Construct an industry-standard auth microservice with bcrypt hashing, signed JWT access tokens, rotating refresh tokens, and route protection guards.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p15_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p15_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p15_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 16 — Authorization, Role-Based Access Control (RBAC) & Sessions</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p16_t01">
+                <span class="topic-name"><strong>01.</strong> Authentication vs Authorization: Principle of Least Privilege</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p16_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p16_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p16_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p16_t02">
+                <span class="topic-name"><strong>02.</strong> Implementing Role-Based Access Control (RBAC) Middleware (Admin, Manager, User)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p16_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p16_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p16_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p16_t03">
+                <span class="topic-name"><strong>03.</strong> Resource Ownership Verification (Preventing IDOR / Insecure Direct Object Reference)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p16_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p16_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p16_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p16_t04">
+                <span class="topic-name"><strong>04.</strong> Session-Based Authentication with `express-session` & Memory/Redis Stores</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p16_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p16_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p16_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p16_t05">
+                <span class="topic-name"><strong>05.</strong> HTTP Cookie Security: `httpOnly`, `secure`, `sameSite`, and Signed Cookies</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p16_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p16_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p16_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p16_t06">
+                <span class="topic-name"><strong>06.</strong> Logout Workflows, Session Revocation & Token Blacklisting</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p16_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p16_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p16_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p16_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 16 Capstone Project</span>
+                <div class="project-title">Multi-Tenant RBAC Organization Access Control System</div>
+                <div class="project-desc">Build an organization permission engine with multi-role authorization middleware, strict tenant ownership checks, and secure cookie sessions.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p16_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p16_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p16_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 17 — Web Security & Defense-in-Depth</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p17_t01">
+                <span class="topic-name"><strong>01.</strong> The OWASP Top 10 for Node.js Backend Developers</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p17_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p17_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p17_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p17_t02">
+                <span class="topic-name"><strong>02.</strong> Securing HTTP Headers with `helmet` (CSP, HSTS, X-Frame-Options)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p17_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p17_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p17_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p17_t03">
+                <span class="topic-name"><strong>03.</strong> Cross-Origin Resource Sharing (CORS) Security & Origin Whitelisting</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p17_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p17_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p17_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p17_t04">
+                <span class="topic-name"><strong>04.</strong> Rate Limiting with `express-rate-limit` to Prevent Brute-Force & DoS Attacks</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p17_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p17_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p17_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p17_t05">
+                <span class="topic-name"><strong>05.</strong> Preventing NoSQL Injection (`express-mongo-sanitize`) & XSS Filtering</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p17_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p17_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p17_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p17_t06">
+                <span class="topic-name"><strong>06.</strong> HTTP Parameter Pollution (HPP) & Restricting Payload Request Limits</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p17_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p17_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p17_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p17_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 17 Capstone Project</span>
+                <div class="project-title">Hardened Production Security Middleware Suite</div>
+                <div class="project-desc">Implement a defense-in-depth security layer that wraps Express with rate limiters, strict CORS policies, security headers, and payload sanitizers.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p17_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p17_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p17_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 18 — File & Media Uploads with Multer & Cloud Storage</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p18_t01">
+                <span class="topic-name"><strong>01.</strong> Understanding Multipart Form Data (`multipart/form-data`) & Binary Streams</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p18_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p18_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p18_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p18_t02">
+                <span class="topic-name"><strong>02.</strong> Configuring Multer: Disk Storage vs Memory Storage Engines</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p18_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p18_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p18_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p18_t03">
+                <span class="topic-name"><strong>03.</strong> File Type Filtering (MIME Verification), Extension Matching & File Size Limits</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p18_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p18_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p18_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p18_t04">
+                <span class="topic-name"><strong>04.</strong> Image Resizing, Cropping & WebP Conversion with `sharp`</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p18_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p18_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p18_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p18_t05">
+                <span class="topic-name"><strong>05.</strong> Uploading Media to Cloud Storage (AWS S3 SDK / Cloudinary)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p18_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p18_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p18_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p18_t06">
+                <span class="topic-name"><strong>06.</strong> Generating Signed Secure URLs & Asset Cleanup Lifecycle</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p18_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p18_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p18_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p18_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 18 Capstone Project</span>
+                <div class="project-title">Media Hosting & Image Processing Microservice</div>
+                <div class="project-desc">Develop an image upload pipeline that accepts multipart files, validates MIME types, compresses to WebP using Sharp, and manages cloud/local storage.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p18_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p18_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p18_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 19 — Real-Time WebSockets with Socket.io</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p19_t01">
+                <span class="topic-name"><strong>01.</strong> Real-Time Protocols: Polling vs Long-Polling vs Server-Sent Events vs WebSockets</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p19_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p19_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p19_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p19_t02">
+                <span class="topic-name"><strong>02.</strong> Mounting `socket.io` onto an Express / Native HTTP Server</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p19_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p19_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p19_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p19_t03">
+                <span class="topic-name"><strong>03.</strong> Event Emitting, Broadcasting, Acknowledgments & Custom Events</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p19_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p19_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p19_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p19_t04">
+                <span class="topic-name"><strong>04.</strong> Socket.io Rooms & Namespaces for Scoped Multi-User Channels</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p19_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p19_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p19_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p19_t05">
+                <span class="topic-name"><strong>05.</strong> Authenticating Socket Connections via JWT Handshake Middleware</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p19_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p19_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p19_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p19_t06">
+                <span class="topic-name"><strong>06.</strong> Managing Online Presence, Disconnection & Automatic Reconnection</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p19_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p19_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p19_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p19_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 19 Capstone Project</span>
+                <div class="project-title">Real-Time Collaborative Chat & Notification Hub</div>
+                <div class="project-desc">Architect a real-time WebSocket backend with Socket.io, featuring JWT connection authentication, room-based private messaging, and presence broadcasts.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p19_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p19_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p19_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 20 — High-Speed Caching with Redis & Performance Tuning</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p20_t01">
+                <span class="topic-name"><strong>01.</strong> Web Performance Bottlenecks & The Role of In-Memory Caching</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p20_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p20_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p20_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p20_t02">
+                <span class="topic-name"><strong>02.</strong> Connecting Node.js to Redis using `ioredis` (Key-Value Strings, Hashes, Sets)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p20_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p20_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p20_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p20_t03">
+                <span class="topic-name"><strong>03.</strong> The Cache-Aside Pattern: Read-Through & Write-Through Architectures</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p20_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p20_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p20_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p20_t04">
+                <span class="topic-name"><strong>04.</strong> Cache Expiration (TTL) & Invalidation Strategies upon Data Mutation</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p20_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p20_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p20_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p20_t05">
+                <span class="topic-name"><strong>05.</strong> Building an Express API Response Caching Middleware</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p20_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p20_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p20_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p20_t06">
+                <span class="topic-name"><strong>06.</strong> Redis Pub/Sub for Real-Time Event Messaging Across Instances</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p20_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p20_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p20_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p20_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 20 Capstone Project</span>
+                <div class="project-title">Redis-Accelerated High-Throughput Product API</div>
+                <div class="project-desc">Implement a high-throughput REST API with an intelligent Redis cache-aside middleware that drastically reduces database query latency and auto-purges stale keys.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p20_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p20_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p20_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="phase-card">
+        <div class="phase-title">PHASE 21 — Automated Testing, Dockerization & Production Deployment</div>
+        <ul class="topics-list">
+            <li class="topic-item" data-id="web_p21_t01">
+                <span class="topic-name"><strong>01.</strong> Testing Pyramid: Unit vs Integration vs End-to-End for Web APIs</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p21_t01" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p21_t01" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p21_t01" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p21_t02">
+                <span class="topic-name"><strong>02.</strong> Integration Testing Express Endpoints with `node:test` and `supertest`</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p21_t02" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p21_t02" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p21_t02" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p21_t03">
+                <span class="topic-name"><strong>03.</strong> Environment Configuration, Secrets Management & 12-Factor App Principles</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p21_t03" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p21_t03" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p21_t03" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p21_t04">
+                <span class="topic-name"><strong>04.</strong> Containerizing Node.js Web Backends with Docker & Multi-Stage Builds</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p21_t04" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p21_t04" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p21_t04" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p21_t05">
+                <span class="topic-name"><strong>05.</strong> Multi-Container Orchestration with Docker Compose (Node + MongoDB + PostgreSQL + Redis)</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p21_t05" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p21_t05" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p21_t05" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+            <li class="topic-item" data-id="web_p21_t06">
+                <span class="topic-name"><strong>06.</strong> Production Process Management with PM2, Graceful Shutdowns & Health Checks</span>
+                <div class="radio-checker-group">
+                    <label class="radio-label radio-pending" title="Not Started">
+                        <input type="radio" name="web_p21_t06" value="pending" checked/>
+                        <span>⚪ Pending</span>
+                    </label>
+                    <label class="radio-label radio-working" title="Currently Studying">
+                        <input type="radio" name="web_p21_t06" value="working" />
+                        <span>🟡 Working</span>
+                    </label>
+                    <label class="radio-label radio-done" title="Completed">
+                        <input type="radio" name="web_p21_t06" value="done" />
+                        <span>🟢 Done</span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+        <div class="project-row" data-id="web_p21_proj">
+            <div class="project-info">
+                <span class="project-tag">Phase 21 Capstone Project</span>
+                <div class="project-title">Production-Ready Dockerized RESTful Web Service</div>
+                <div class="project-desc">Package a complete production-grade Express REST service with automated Supertest integration tests, multi-stage Dockerfile, Docker Compose stack, and health check probes.</div>
+            </div>
+            <div class="radio-checker-group">
+                <label class="radio-label radio-pending" title="Not Started">
+                    <input type="radio" name="web_p21_proj" value="pending" checked/>
+                    <span>⚪ Pending</span>
+                </label>
+                <label class="radio-label radio-working" title="In Progress">
+                    <input type="radio" name="web_p21_proj" value="working" />
+                    <span>🟡 Working</span>
+                </label>
+                <label class="radio-label radio-done" title="Completed">
+                    <input type="radio" name="web_p21_proj" value="done" />
+                    <span>🟢 Done</span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'nodejs_web_backend_syllabus_progress';
+
+function getStoredState() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveState(state) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+}
+
+function updateUI() {
+    const state = getStoredState();
+    
+    // Topics
+    const topicItems = document.querySelectorAll('.topic-item');
+    let topicsDone = 0;
+    topicItems.forEach(item => {
+        const id = item.getAttribute('data-id');
+        const defaultVal = item.querySelector('input:checked')?.value || 'pending';
+        const val = state[id] || defaultVal;
+        const radio = item.querySelector(`input[value="${val}"]`);
+        if (radio) radio.checked = true;
+        
+        item.classList.remove('status-done', 'status-working', 'status-pending');
+        item.classList.add('status-' + val);
+        if (val === 'done') topicsDone++;
+    });
+
+    // Projects
+    const projectItems = document.querySelectorAll('.project-row');
+    let projectsDone = 0;
+    projectItems.forEach(item => {
+        const id = item.getAttribute('data-id');
+        const defaultVal = item.querySelector('input:checked')?.value || 'pending';
+        const val = state[id] || defaultVal;
+        const radio = item.querySelector(`input[value="${val}"]`);
+        if (radio) radio.checked = true;
+        
+        item.classList.remove('status-done', 'status-working', 'status-pending');
+        item.classList.add('status-' + val);
+        if (val === 'done') projectsDone++;
+    });
+
+    // Stats
+    const totalTopics = topicItems.length;
+    const totalProjects = projectItems.length;
+    const totalItems = totalTopics + totalProjects;
+    const totalDone = topicsDone + projectsDone;
+    const pct = totalItems > 0 ? ((totalDone / totalItems) * 100).toFixed(1) : 0;
+
+    document.getElementById('topics-count').textContent = topicsDone;
+    document.getElementById('topics-total').textContent = totalTopics;
+    document.getElementById('projects-count').textContent = projectsDone;
+    document.getElementById('projects-total').textContent = totalProjects;
+    document.getElementById('total-pct').textContent = pct + '%';
+    document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function onRadioChange(e) {
+    if (e.target && e.target.type === 'radio') {
+        const name = e.target.name;
+        const val = e.target.value;
+        const state = getStoredState();
+        state[name] = val;
+        saveState(state);
+        updateUI();
+        pushRemoteState(name, val);
+    }
+}
+
+function resetTracker() {
+    if (confirm('Are you sure you want to reset all tracked progress?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        updateUI();
+    }
+}
+
+function exportTracker() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(getStoredState(), null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", "nodejs_web_backend_progress_backup.json");
+    dlAnchorElem.click();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('change', onRadioChange);
+    updateUI();
+    fetchRemoteState();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ল্যাব ০৪: পাইপলাইন বেসড Gzip কম্প্রেসার</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --accent-border: #bfdbfe;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dbeafe;
+            --tag-text: #1d4ed8;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 940px; margin: 0 auto; }
+        .nav-bar { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .nav-link {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            color: var(--accent); text-decoration: none; font-weight: 600;
+            font-size: 0.92rem; padding: 0.5rem 1rem; background: var(--surface);
+            border-radius: 8px; border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); transition: all 0.2s;
+        }
+        .nav-link:hover { background: var(--surface-subtle); border-color: var(--border-subtle); }
+        header {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .badge-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.75rem; }
+        .badge {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; padding: 0.25rem 0.65rem; border-radius: 6px;
+        }
+        .badge-topic { background-color: var(--tag-bg); color: var(--tag-text); }
+        h1 { color: var(--text-main); font-size: 1.95rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.5rem; }
+        .subtitle { font-size: 1.05rem; color: var(--text-muted); }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        h2 {
+            color: var(--text-main); font-size: 1.35rem; font-weight: 700;
+            margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle); padding-bottom: 0.5rem;
+        }
+        p { margin-bottom: 1.1rem; font-size: 1.02rem; }
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg); border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #dc2626;
+        }
+        pre {
+            background-color: var(--code-bg); color: var(--code-text);
+            padding: 1.25rem; border-radius: 8px; overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem; border: 1px solid #1e293b;
+        }
+        pre code { background-color: transparent; border: none; padding: 0; color: inherit; }
+        .terminal-box {
+            background: #090d16; border: 1px solid #1e293b; border-radius: 8px;
+            padding: 1rem 1.25rem; margin-top: 1rem; color: #38bdf8;
+            font-family: ui-monospace, monospace; font-size: 0.88rem;
+        }
+        .term-title { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.5rem; }
+
+        .copy-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.12); color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 4px;
+            padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; user-select: none; z-index: 5;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.28); color: #ffffff; }
+        .copy-btn.copied { background: #10b981 !important; border-color: #059669 !important; }
+        .copy-btn-floating { position: absolute; top: 6px; right: 8px; }
+
+        @media (max-width: 768px) {
+            body { padding: 0.75rem 0.5rem; font-size: 14px; }
+            .container { max-width: 100%; width: 100%; }
+            header { padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 0.85rem; }
+            header h1 { font-size: 1.25rem; }
+            .card { padding: 1rem 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="../index.html" class="nav-link">← টপিক ০৪ স্টাডি গাইড</a>
+            <a href="../../../index.html" class="nav-link">মাস্টার ট্র্যাকার</a>
+        </div>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-topic">Project Lab 04</span>
+                <span class="badge" style="background: #f1f5f9; color: #475569;">Gzip Pipeline</span>
+            </div>
+            <h1>ল্যাব ০৪: পাইপলাইন বেসড Gzip কম্প্রেসার</h1>
+            <p class="subtitle">প্রমিজ-ভিত্তিক নিরাপদ ফাইল কম্প্রেশন ইঞ্জিন।</p>
+        </header>
+
+        <section class="card">
+            <h2>🛠️ কোড বাস্তবায়ন</h2>
+            <pre><code>import { pipeline } from 'node:stream/promises';
+import fs from 'node:fs';
+import zlib from 'node:zlib';
+
+async function run() {
+  const read = fs.createReadStream('input.txt');
+  const gzip = zlib.createGzip();
+  const write = fs.createWriteStream('input.txt.gz');
+
+  console.log('[START] Beginning gzip stream pipeline...');
+  await pipeline(read, gzip, write);
+  console.log('[DONE] Gzip compression finished safely!');
+}
+
+run().catch(console.error);</code></pre>
+
+            <div class="terminal-box">
+                <div class="term-title">💻 Terminal Output</div>
+                <pre><code>[START] Beginning gzip stream pipeline...
+[DONE] Gzip compression finished safely!</code></pre>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    function copyTextToClipboard(text, btn) {
+        function showSuccess() {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '✅ Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showSuccess).catch(() => fallbackCopy(text));
+        } else { fallbackCopy(text); }
+        function fallbackCopy(str) {
+            const ta = document.createElement('textarea');
+            ta.value = str;
+            ta.style.position = 'fixed';
+            ta.style.top = '0';
+            ta.style.left = '0';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); showSuccess(); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre').forEach(pre => {
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            pre.parentNode.insertBefore(wrapper, pre);
+            wrapper.appendChild(pre);
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn copy-btn-floating';
+            btn.setAttribute('type', 'button');
+            btn.innerHTML = '📋 Copy Code';
+            btn.onclick = () => copyTextToClipboard(pre.innerText.trim(), btn);
+            wrapper.appendChild(btn);
+        });
+    });
+    </script>
+</body>
+</html>

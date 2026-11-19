@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টপিক ০৩: Stream Backpressure ও ইভেন্ট লাইফসাইকেল (data, drain, finish)</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --accent-border: #bfdbfe;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dbeafe;
+            --tag-text: #1d4ed8;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --info-bg: #f0fdf4;
+            --info-border: #bbf7d0;
+            --info-text: #15803d;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+            --danger-bg: #fef2f2;
+            --danger-border: #fecaca;
+            --danger-text: #b91c1c;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 940px; margin: 0 auto; }
+        .nav-back {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            color: var(--accent); text-decoration: none; font-weight: 600;
+            font-size: 0.95rem; margin-bottom: 2rem; padding: 0.5rem 1rem;
+            background: var(--surface); border-radius: 8px; border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); transition: all 0.2s;
+        }
+        .nav-back:hover { background: var(--surface-subtle); border-color: var(--border-subtle); }
+        header {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2.25rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .badge-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .badge {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; padding: 0.25rem 0.65rem; border-radius: 6px;
+        }
+        .badge-phase { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
+        .badge-topic { background-color: var(--tag-bg); color: var(--tag-text); }
+        h1 { color: var(--text-main); font-size: 2rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.75rem; }
+        .subtitle { font-size: 1.1rem; color: var(--text-muted); font-weight: 400; line-height: 1.6; }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        h2 {
+            color: var(--text-main); font-size: 1.45rem; font-weight: 700;
+            margin-bottom: 1.25rem; padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle); display: flex; align-items: center; gap: 0.5rem;
+        }
+        h3 { color: var(--text-main); font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.75rem 0; }
+        p { margin-bottom: 1.2rem; font-size: 1.02rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1.25rem; }
+        li { margin-bottom: 0.5rem; }
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg); border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #dc2626;
+        }
+        pre {
+            background-color: var(--code-bg); color: var(--code-text);
+            padding: 1.25rem; border-radius: 8px; overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem; border: 1px solid #1e293b;
+        }
+        pre code { background-color: transparent; border: none; padding: 0; color: inherit; }
+        .alert {
+            padding: 1.1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;
+            font-size: 0.98rem; display: flex; flex-direction: column; gap: 0.4rem;
+        }
+        .alert-danger { background-color: var(--danger-bg); border-left: 4px solid var(--danger-border); color: var(--danger-text); }
+        .cta-container {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--accent-light); border: 1px solid var(--accent-border);
+            border-radius: 12px; padding: 1.75rem; margin-top: 2rem; flex-wrap: wrap; gap: 1rem;
+        }
+        .btn-action {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--accent); color: #ffffff; font-weight: 600;
+            padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none;
+            transition: all 0.2s; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+        .btn-action:hover { background: #1d4ed8; transform: translateY(-1px); }
+
+        .copy-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.12); color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 4px;
+            padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; user-select: none; z-index: 5;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.28); color: #ffffff; }
+        .copy-btn.copied { background: #10b981 !important; border-color: #059669 !important; }
+        .copy-btn-floating { position: absolute; top: 6px; right: 8px; }
+
+        @media (max-width: 768px) {
+            body { padding: 0.75rem 0.5rem; font-size: 14px; }
+            .container { max-width: 100%; width: 100%; }
+            header { padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 0.85rem; }
+            header h1 { font-size: 1.3rem; }
+            .card { padding: 1rem 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="nav-back">← মাস্টার ট্র্যাকারে ফিরে যান</a>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">Phase 02: Buffers &amp; Streams</span>
+                <span class="badge badge-topic">Topic 03</span>
+                <span class="badge" style="background: #e0f2fe; color: #0369a1;">পাঠের সময়: ১৫ মিনিট</span>
+            </div>
+            <h1>Stream Backpressure ও ইভেন্ট লাইফসাইকেল (data, drain, finish)</h1>
+            <p class="subtitle">উচ্চগতির ডাটা সোর্স এবং ধীরগতির গন্তব্যের মধ্যে মেমোরি ব্যালেন্স ও ব্যাকপ্রেশার ইঞ্জিনিয়ারিং।</p>
+        </header>
+
+        <section class="card">
+            <h2>১. ব্যাকপ্রেশার (Backpressure) কী?</h2>
+            <p>যখন কোনো রিডেবল স্ট্রিম অতি দ্রুত গতিতে ডাটা উৎপাদন করে, কিন্তু রাইটেবল স্ট্রিম ধীরগতির কারণে সেই গতিতে ডিস্কে বা ইন্টারনেটে লিখতে পারে না, তখন অতিরিক্ত ডাটা মেমোরির ইন্টারনাল বাফারে জমতে শুরু করে। এই অবস্থাকে <strong>Backpressure</strong> বলে।</p>
+
+            <div class="alert alert-danger">
+                <strong>⚠️ মারাত্মক ঝুঁকি:</strong> ব্যাকপ্রেশার হ্যান্ডেল না করলে Writable স্ট্রিমের বাফার সীমাহীন বড় হয়ে সার্ভারের সমস্ত র‍্যাম (RAM) গ্রাস করবে এবং প্রোডাকশন ক্র্যাশ ঘটবে!
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>২. highWaterMark এবং drain ইভেন্ট</h2>
+            <p>প্রতিটি Writable স্ট্রিমে একটি সর্বোচ্চ মেমোরি সীমা থাকে যাকে <code>highWaterMark</code> বলা হয় (ডিফল্ট ১৬ কিলোবাইট)।</p>
+            <ul>
+                <li><code>writable.write(chunk)</code> মেথড <code>false</code> রিটার্ন করলে বুঝতে হবে ইন্টারনাল বাফার পূর্ণ!</li>
+                <li>বাফার খালি হওয়া পর্যন্ত রিডেবল স্ট্রিমকে পজ (pause) করতে হবে।</li>
+                <li>বাফার খালি হলে রাইটেবল স্ট্রিম <code>drain</code> ইভেন্ট ফায়ার করে। তখন পুনরায় ডাটা পাঠানো শুরু করা যায়।</li>
+            </ul>
+
+            <pre><code>import fs from 'node:fs';
+
+function writeSafely(writer, totalRecords) {
+  let count = 0;
+
+  function write() {
+    let canContinue = true;
+    while (count < totalRecords && canContinue) {
+      count++;
+      const data = 'Log entry #' + count + '\\n';
+      if (count === totalRecords) {
+        writer.end(data);
+      } else {
+        canContinue = writer.write(data);
+      }
+    }
+
+    if (count < totalRecords) {
+      // বাফার পূর্ণ! drain ইভেন্টের অপেক্ষা করুন
+      writer.once('drain', write);
+    }
+  }
+
+  write();
+}
+
+const fileStream = fs.createWriteStream('safe_output.txt');
+writeSafely(fileStream, 100000);</code></pre>
+        </section>
+
+        <section class="card">
+            <h2>৩. সারাংশ ও গুরুত্বপূর্ণ টেকওয়ে</h2>
+            <div class="cta-container">
+                <div>
+                    <h3 style="margin: 0; color: var(--accent);">ল্যাব করতে প্রস্তুত?</h3>
+                    <p style="margin: 0; font-size: 0.95rem;">টপিক ০৩ এর প্রজেক্ট ল্যাব ওয়াকথ্রু দেখুন।</p>
+                </div>
+                <a href="Project/index.html" class="btn-action">প্রজেক্ট ল্যাব শুরু করুন →</a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    function copyTextToClipboard(text, btn) {
+        function showSuccess() {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '✅ Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showSuccess).catch(() => fallbackCopy(text));
+        } else { fallbackCopy(text); }
+        function fallbackCopy(str) {
+            const ta = document.createElement('textarea');
+            ta.value = str;
+            ta.style.position = 'fixed';
+            ta.style.top = '0';
+            ta.style.left = '0';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); showSuccess(); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre').forEach(pre => {
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            pre.parentNode.insertBefore(wrapper, pre);
+            wrapper.appendChild(pre);
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn copy-btn-floating';
+            btn.setAttribute('type', 'button');
+            btn.innerHTML = '📋 Copy Code';
+            btn.onclick = () => copyTextToClipboard(pre.innerText.trim(), btn);
+            wrapper.appendChild(btn);
+        });
+    });
+    </script>
+</body>
+</html>

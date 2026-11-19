@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফেজ ০২ ক্যাপস্টোন প্রজেক্ট: High-Performance Streaming Log &amp; Data Export Engine</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-subtle: #f1f5f9;
+            --accent: #16a34a;
+            --accent-light: #f0fdf4;
+            --accent-border: #bbf7d0;
+            --text-main: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --tag-bg: #dcfce7;
+            --tag-text: #15803d;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+            --code-inline-bg: #f1f5f9;
+            --code-inline-border: #e2e8f0;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --warning-text: #92400e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", "Kalpurush", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-body);
+            line-height: 1.8;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 940px; margin: 0 auto; }
+        .nav-back {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            color: var(--accent); text-decoration: none; font-weight: 600;
+            font-size: 0.95rem; margin-bottom: 2rem; padding: 0.5rem 1rem;
+            background: var(--surface); border-radius: 8px; border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); transition: all 0.2s;
+        }
+        .nav-back:hover { background: var(--surface-subtle); border-color: var(--border-subtle); }
+        header {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2.25rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .badge-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        .badge {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; padding: 0.25rem 0.65rem; border-radius: 6px;
+        }
+        .badge-phase { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
+        .badge-topic { background-color: var(--tag-bg); color: var(--tag-text); }
+        h1 { color: var(--text-main); font-size: 2rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.75rem; }
+        .subtitle { font-size: 1.1rem; color: var(--text-muted); font-weight: 400; line-height: 1.6; }
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 2rem; margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+        h2 {
+            color: var(--text-main); font-size: 1.45rem; font-weight: 700;
+            margin-bottom: 1.25rem; padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--surface-subtle); display: flex; align-items: center; gap: 0.5rem;
+        }
+        p { margin-bottom: 1.2rem; font-size: 1.02rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1.25rem; }
+        li { margin-bottom: 0.5rem; }
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: var(--code-inline-bg); border: 1px solid var(--code-inline-border);
+            padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #dc2626;
+        }
+        pre {
+            background-color: var(--code-bg); color: var(--code-text);
+            padding: 1.25rem; border-radius: 8px; overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem; border: 1px solid #1e293b;
+        }
+        pre code { background-color: transparent; border: none; padding: 0; color: inherit; }
+        .alert {
+            padding: 1.1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;
+            font-size: 0.98rem; display: flex; flex-direction: column; gap: 0.4rem;
+        }
+        .alert-warning { background-color: var(--warning-bg); border-left: 4px solid var(--warning-border); color: var(--warning-text); }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { border: 1px solid var(--border); padding: 0.75rem 1rem; text-align: left; }
+        th { background-color: var(--surface-subtle); color: var(--text-main); font-weight: 600; }
+        tr:nth-child(even) { background-color: #fafbfc; }
+
+        .copy-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.12); color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 4px;
+            padding: 3px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; user-select: none; z-index: 5;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.28); color: #ffffff; }
+        .copy-btn.copied { background: #10b981 !important; border-color: #059669 !important; }
+        .copy-btn-floating { position: absolute; top: 6px; right: 8px; }
+
+        @media (max-width: 768px) {
+            body { padding: 0.75rem 0.5rem; font-size: 14px; }
+            .container { max-width: 100%; width: 100%; }
+            header { padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 0.85rem; }
+            header h1 { font-size: 1.3rem; }
+            .card { padding: 1rem 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../../index.html" class="nav-back">← মাস্টার ট্র্যাকারে ফিরে যান</a>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge badge-phase">Phase 02 Capstone</span>
+                <span class="badge badge-topic">Production Project</span>
+                <span class="badge" style="background: #fef3c7; color: #b45309;">Hands-on Challenge</span>
+            </div>
+            <h1>ফেজ ০২ ক্যাপস্টোন প্রজেক্ট: High-Performance Streaming Log &amp; Data Export Engine</h1>
+            <p class="subtitle">মাল্টি-মেগাবাইট ডাটা চাঙ্ক অন-দ্য-ফ্লাই ফিল্টার, মাস্ক ও Gzip কম্প্রেস করে HTTP-তে স্ট্রিম করার পূর্ণাঙ্গ সিস্টেম।</p>
+        </header>
+
+        <section class="card">
+            <h2>🎯 প্রজেক্টের উদ্দেশ্য ও সিস্টেম আর্কিটেকচার</h2>
+            <p>এই ক্যাপস্টোন প্রজেক্টে আপনি সম্পূর্ণ পিওর Node.js ব্যবহার করে একটি হাই-পারফরম্যান্স স্ট্রিমিং ব্যাকএন্ড ইঞ্জিন তৈরি করবেন। এটি:</p>
+            <ol>
+                <li>বিশাল সাইজের ডাটা/লগ সোর্স থেকে চাঙ্ক আকারে রিড করবে।</li>
+                <li>কাস্টম <code>Transform</code> স্ট্রিম দিয়ে সংবেদনশীল ক্রেডেনশিয়াল ও টোকেন মাস্ক করবে।</li>
+                <li><code>zlib.createGzip()</code> দিয়ে মেমোরিতে রিয়েলটাইমে সংকুচিত করবে।</li>
+                <li><code>stream.promises.pipeline()</code> দিয়ে কোনো ব্যাকপ্রেশার লিক ছাড়া ক্লায়েন্টে ডেলিভার করবে।</li>
+            </ol>
+            <div class="alert alert-warning">
+                <strong>🔒 ক্যাপস্টোন বাউন্ডারি রুল:</strong> এই প্রজেক্টের কোড আপনি নিজে পিসিতে বসে লিখবেন। এই ফাইলটিতে শুধুমাত্র আর্কিটেকচার, স্পেসিফিকেশন ও টেস্ট কেস নির্দেশিকা দেওয়া হয়েছে।
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📋 প্রজেক্ট স্পেসিফিকেশন ও এন্ডপয়েন্টসমূহ</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>মেথড ও পাথ</th>
+                        <th>ইনপুট হেডার/কুয়েরি</th>
+                        <th>প্রত্যাশিত আচরণ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>GET /stream/logs</code></td>
+                        <td><code>?level=error</code></td>
+                        <td>শুধুমাত্র 'ERROR' লেভেলের লগগুলো ফিল্টার করে সরাসরি স্ট্রিম করবে।</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET /stream/export.gz</code></td>
+                        <td><code>Accept-Encoding: gzip</code></td>
+                        <td>স্যানিটাইজড লগগুলোকে অন-দ্য-ফ্লাই Gzip করে ট্রান্সফার করবে।</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+    function copyTextToClipboard(text, btn) {
+        function showSuccess() {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '✅ Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showSuccess).catch(() => fallbackCopy(text));
+        } else { fallbackCopy(text); }
+        function fallbackCopy(str) {
+            const ta = document.createElement('textarea');
+            ta.value = str;
+            ta.style.position = 'fixed';
+            ta.style.top = '0';
+            ta.style.left = '0';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); showSuccess(); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre').forEach(pre => {
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            pre.parentNode.insertBefore(wrapper, pre);
+            wrapper.appendChild(pre);
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn copy-btn-floating';
+            btn.setAttribute('type', 'button');
+            btn.innerHTML = '📋 Copy Code';
+            btn.onclick = () => copyTextToClipboard(pre.innerText.trim(), btn);
+            wrapper.appendChild(btn);
+        });
+    });
+    </script>
+</body>
+</html>

@@ -307,6 +307,48 @@
             color: #334155;
             line-height: 1.45;
         }
+
+        /* Mobile-First Responsive Design */
+        @media (max-width: 768px) {
+            body { padding: 0.75rem 0.5rem; font-size: 14px; line-height: 1.5; }
+            .container { max-width: 100%; width: 100%; }
+            .sticky-tracker-bar {
+                padding: 0.6rem 0.75rem; border-radius: 8px; margin-bottom: 0.85rem;
+                flex-direction: column; align-items: stretch; gap: 0.45rem;
+            }
+            .tracker-stats {
+                width: 100%; display: flex; justify-content: space-between; gap: 0.35rem; font-size: 0.76rem;
+            }
+            .stat-badge { padding: 0.2rem 0.45rem; font-size: 0.74rem; border-radius: 5px; flex: 1; text-align: center; }
+            .progress-outer { width: 100%; max-width: 100%; min-width: 100%; height: 8px; border-radius: 4px; margin: 0; }
+            .tracker-actions { width: 100%; display: flex; justify-content: space-between; gap: 0.5rem; }
+            .tracker-btn { flex: 1; padding: 0.3rem 0.5rem; font-size: 0.74rem; text-align: center; }
+            header { padding: 1.25rem 1rem; border-radius: 8px; margin-bottom: 0.85rem; border-left-width: 4px; }
+            header h1 { font-size: 1.25rem; line-height: 1.35; margin-bottom: 0.4rem; }
+            #cloud-sync-status { font-size: 0.72rem !important; padding: 0.2rem 0.6rem !important; }
+            .phase-card, .section-card { padding: 0.85rem 0.75rem; border-radius: 8px; margin-bottom: 0.85rem; }
+            .phase-title, .section-card h2 { font-size: 1.12rem; padding-bottom: 0.4rem; margin-bottom: 0.75rem; }
+            .topic-item {
+                flex-direction: column; align-items: stretch; padding: 0.6rem 0.65rem;
+                margin-bottom: 0.45rem; gap: 0.45rem; border-radius: 6px;
+            }
+            .topic-name {
+                margin-right: 0; font-size: 0.86rem; line-height: 1.45;
+                display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.35rem;
+            }
+            .topic-link-badge { margin-left: auto; font-size: 0.7rem; padding: 0.15rem 0.45rem; }
+            .radio-checker-group {
+                width: 100%; display: flex; justify-content: space-between;
+                padding: 2px; border-radius: 6px; background: #e2e8f0;
+            }
+            .radio-label { flex: 1; display: flex; justify-content: center; text-align: center; }
+            .radio-label span { width: 100%; text-align: center; padding: 5px 2px; font-size: 0.72rem; border-radius: 5px; display: block; }
+            .project-row { flex-direction: column; align-items: stretch; padding: 0.75rem 0.75rem; gap: 0.5rem; border-left-width: 4px; }
+            .project-info { font-size: 0.86rem; line-height: 1.45; }
+            .project-row .radio-checker-group { width: 100%; }
+            table { display: block; overflow-x: auto; white-space: nowrap; font-size: 0.78rem; }
+        }
+
     </style>
 </head>
 <body>
@@ -329,6 +371,11 @@
 
     <header>
         <h1>Complete Node.js, Express &amp; Database Web Engineering Syllabus</h1>
+        <div class="sync-container" style="margin-top: 0.65rem;">
+            <span id="cloud-sync-status" style="display:inline-flex; align-items:center; gap:0.35rem; font-size:0.8rem; font-weight:700; padding:0.25rem 0.75rem; border-radius:20px; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0;">
+                🟢 Cloud Synced (MongoDB Atlas)
+            </span>
+        </div>
         <div class="meta-box">
             <strong>Goal:</strong> Master production-grade web backend engineering: Node.js, Streams &amp; Buffers, Express.js, MVC Architecture, MongoDB &amp; Mongoose, Embedded SQLite, Relational SQL &amp; PostgreSQL, Sequelize ORM, Prisma ORM, Authentication (JWT), REST APIs, WebSockets, Redis, and Cloud Deployment.
         </div>
@@ -472,11 +519,11 @@
                 <span class="topic-name"><strong>01.</strong> Binary Data in Web Backends & The Node.js `Buffer` Class <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/01_Binary_Data_and_Buffer_Class/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
-                        <input type="radio" name="web_p02_t01" value="pending" />
+                        <input type="radio" name="web_p02_t01" value="pending" checked/>
                         <span>⚪ Pending</span>
                     </label>
                     <label class="radio-label radio-working" title="Currently Studying">
-                        <input type="radio" name="web_p02_t01" value="working" checked/>
+                        <input type="radio" name="web_p02_t01" value="working" />
                         <span>🟡 Working</span>
                     </label>
                     <label class="radio-label radio-done" title="Completed">
@@ -486,7 +533,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p02_t02">
-                <span class="topic-name"><strong>02.</strong> Node Streams Architecture: Readable, Writable, Duplex & Transform</span>
+                <span class="topic-name"><strong>02.</strong> Node Streams Architecture: Readable, Writable, Duplex & Transform <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/02_Node_Streams_Architecture/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p02_t02" value="pending" checked/>
@@ -503,7 +550,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p02_t03">
-                <span class="topic-name"><strong>03.</strong> Stream Backpressure & Event Lifecycle (`data`, `end`, `drain`, `error`)</span>
+                <span class="topic-name"><strong>03.</strong> Stream Backpressure & Event Lifecycle (`data`, `end`, `drain`, `error`) <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/03_Stream_Backpressure_and_Lifecycle/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p02_t03" value="pending" checked/>
@@ -520,7 +567,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p02_t04">
-                <span class="topic-name"><strong>04.</strong> Safe Stream Composition with `stream.promises.pipeline()`</span>
+                <span class="topic-name"><strong>04.</strong> Safe Stream Composition with `stream.promises.pipeline()` <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/04_Safe_Stream_Composition_Pipeline/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p02_t04" value="pending" checked/>
@@ -537,7 +584,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p02_t05">
-                <span class="topic-name"><strong>05.</strong> Handling Chunked HTTP Request & Response Streams (`req` & `res`)</span>
+                <span class="topic-name"><strong>05.</strong> Handling Chunked HTTP Request & Response Streams (`req` & `res`) <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/05_Chunked_HTTP_Request_Response_Streams/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p02_t05" value="pending" checked/>
@@ -554,7 +601,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p02_t06">
-                <span class="topic-name"><strong>06.</strong> High-Performance CSV/JSON Data Streaming & Memory Optimization</span>
+                <span class="topic-name"><strong>06.</strong> High-Performance CSV/JSON Data Streaming & Memory Optimization <a href="Phase_02_Buffers_Streams_and_Binary_Data/Topics/06_High_Performance_Data_Streaming_Optimization/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p02_t06" value="pending" checked/>
@@ -574,7 +621,7 @@
         <div class="project-row" data-id="web_p02_proj">
             <div class="project-info">
                 <span class="project-tag">Phase 02 Capstone Project</span>
-                <div class="project-title">High-Performance Streaming Log & Data Export Engine</div>
+                <div class="project-title">High-Performance Streaming Log & Data Export Engine <a href="Phase_02_Buffers_Streams_and_Binary_Data/Projects/Project_Streaming_Data_Export_Engine/index.html" class="topic-link-badge">🚀 Project Guide</a></div>
                 <div class="project-desc">Architect a memory-efficient streaming pipeline that transforms and exports multi-megabyte datasets via HTTP with backpressure handling.</div>
             </div>
             <div class="radio-checker-group">
@@ -597,7 +644,7 @@
         <div class="phase-title">PHASE 03 — Express.js Framework Fundamentals</div>
         <ul class="topics-list">
             <li class="topic-item" data-id="web_p03_t01">
-                <span class="topic-name"><strong>01.</strong> Express.js Architecture & Philosophy (Why Express over Native HTTP)</span>
+                <span class="topic-name"><strong>01.</strong> Express.js Architecture & Philosophy (Why Express over Native HTTP) <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/01_Express_Architecture_and_Philosophy/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p03_t01" value="pending" checked/>
@@ -614,7 +661,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p03_t02">
-                <span class="topic-name"><strong>02.</strong> Application Setup, Environment Variables & Configuration with `dotenv`</span>
+                <span class="topic-name"><strong>02.</strong> Application Setup, Environment Variables & Configuration with `dotenv` <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/02_App_Setup_Env_Vars_and_Dotenv/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p03_t02" value="pending" checked/>
@@ -631,7 +678,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p03_t03">
-                <span class="topic-name"><strong>03.</strong> Route Handlers: HTTP Verbs, Route Patterns & Wildcards</span>
+                <span class="topic-name"><strong>03.</strong> Route Handlers: HTTP Verbs, Route Patterns & Wildcards <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/03_Route_Handlers_HTTP_Verbs_Patterns/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p03_t03" value="pending" checked/>
@@ -648,7 +695,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p03_t04">
-                <span class="topic-name"><strong>04.</strong> Handling Dynamic Route Parameters (`req.params`) & Query Strings (`req.query`)</span>
+                <span class="topic-name"><strong>04.</strong> Handling Dynamic Route Parameters (`req.params`) & Query Strings (`req.query`) <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/04_Dynamic_Params_and_Query_Strings/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p03_t04" value="pending" checked/>
@@ -665,7 +712,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p03_t05">
-                <span class="topic-name"><strong>05.</strong> Express Response Methods (`res.json()`, `res.send()`, `res.status()`, `res.sendFile()`)</span>
+                <span class="topic-name"><strong>05.</strong> Express Response Methods (`res.json()`, `res.send()`, `res.status()`, `res.sendFile()`) <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/05_Express_Response_Methods/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p03_t05" value="pending" checked/>
@@ -682,7 +729,7 @@
                 </div>
             </li>
             <li class="topic-item" data-id="web_p03_t06">
-                <span class="topic-name"><strong>06.</strong> Modular Route Organization using `express.Router()`</span>
+                <span class="topic-name"><strong>06.</strong> Modular Route Organization using `express.Router()` <a href="Phase_03_ExpressJS_Core_and_Routing/Topics/06_Modular_Routes_with_Express_Router/index.html" class="topic-link-badge">📖 Study Guide</a></span>
                 <div class="radio-checker-group">
                     <label class="radio-label radio-pending" title="Not Started">
                         <input type="radio" name="web_p03_t06" value="pending" checked/>
@@ -702,7 +749,7 @@
         <div class="project-row" data-id="web_p03_proj">
             <div class="project-info">
                 <span class="project-tag">Phase 03 Capstone Project</span>
-                <div class="project-title">Modular RESTful Product Catalog Service</div>
+                <div class="project-title">Modular RESTful Product Catalog Service <a href="Phase_03_ExpressJS_Core_and_Routing/Projects/Project_Modular_Product_Catalog_Service/index.html" class="topic-link-badge">🚀 Project Guide</a></div>
                 <div class="project-desc">Implement a structured multi-resource catalog service with modular Express routers, nested resources, and parameter validators.</div>
             </div>
             <div class="radio-checker-group">
@@ -3101,6 +3148,7 @@ function onRadioChange(e) {
         state[name] = val;
         saveState(state);
         updateUI();
+        pushRemoteState(name, val);
     }
 }
 
@@ -3122,6 +3170,7 @@ function exportTracker() {
 document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('change', onRadioChange);
     updateUI();
+    fetchRemoteState();
 });
 </script>
 </body>

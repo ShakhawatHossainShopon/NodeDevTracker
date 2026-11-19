@@ -1,9 +1,0 @@
-{
-  "name": "topic-06-serving-static-files",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js",
-    "applied": "node applied.js"
-  }
-}

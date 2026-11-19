@@ -1,9 +1,0 @@
-{
-  "name": "topic-05-post-bodies-streaming-json",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js",
-    "applied": "node applied.js"
-  }
-}
